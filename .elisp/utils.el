@@ -3,7 +3,7 @@
 ;;;;;;;;;;;;;;;;;;
 ; fancy delete-other-windows
 ; from: http://www.cs.berkeley.edu/~smcpeak/elisp/scott.emacs.el
-(defvar my-saved-window-config-list nil)
+(defvar util-saved-window-config-list nil)
 (defun mdi-maximize-restore-toggle ()
   "When called in a multi-window frame it will save the window
   configuration by calling `current-window-configuration', then call
@@ -460,3 +460,140 @@ The characters copied are inserted in the buffer before point."
 (defun util-toggle-kbd-macro-recording ()
   (interactive)
   (if defining-kbd-macro (end-kbd-macro) (start-kbd-macro 'nil)))
+
+(defun util-beginning-or-toindent ()
+  (interactive)
+  (if (and (eq (current-column) 0)
+           (string= (previous-key-string) "C-a"))
+      (back-to-indentation)
+    (beginning-of-line)))
+
+(defun util-ending-or-nextline-end ()
+  (interactive)
+  (if (string= (previous-key-string) "C-e") (forward-line 1))
+  (end-of-line-ignore-whitespace))
+
+(defun util-goto-end (&optional ARG)
+  (interactive)
+  (let ((prevkey (previous-key-string)))
+    (if (or (string= prevkey "<end>")
+            (string= prevkey "<kp-end>")
+            (and (string= (previous-key-string 7) "ESC")
+                 (string= (previous-key-string 6) "[")
+                 (string= (previous-key-string 5) "4")
+                 (string= (previous-key-string 4) "~")))
+        (end-of-buffer ARG)
+      (end-of-line ARG))))
+
+(defun util-goto-beg (&optional ARG)
+  (interactive)
+  (let ((prevkey (previous-key-string)))
+    (if (or (string= prevkey "<home>")
+            (string= prevkey "<kp-home>")
+            (and (string= (previous-key-string 7) "ESC")
+                 (string= (previous-key-string 6) "[")
+                 (string= (previous-key-string 5) "1")
+                 (string= (previous-key-string 4) "~")))
+        (beginning-of-buffer ARG)
+      (beginning-of-line ARG))))
+
+
+(defun util-jump-to-top ()
+  (interactive)
+  (goto-line (- (current-line-number) (window-line))))
+(defun util-jump-to-bottom ()
+  (interactive)
+  (goto-line (- (+ (current-line-number) (window-line-from-bottom)) 1)))
+
+(defun util-scootch-up ()
+  (interactive)
+  (util-scootch -1))
+(defun util-scootch-down ()
+  (interactive)
+  (util-scootch 1))
+(defun util-scootch-left ()
+  (interactive)
+  (util-scootch -1 't))
+(defun util-scootch-right ()
+  (interactive)
+  (util-scootch 1 't))
+(defun util-scootch (linecount &optional horizontal)
+  (let ((col (current-column)) mark-was-active beg end region)
+    (if mark-active
+        (progn
+          (setq mark-was-active t)
+          (if (< (point) (mark)) (exchange-point-and-mark))
+          (setq beg (mark))
+          (setq end (point))
+          )
+      (progn
+        (setq beg (line-beginning-position))
+        (setq end (1+ (line-end-position)))
+        ))
+    (setq region (buffer-substring beg end))
+    (delete-region beg end)
+    (if horizontal (forward-char linecount) (forward-line linecount))
+    (setq beg (point))
+    (insert region)
+    (if mark-was-active 
+        (progn
+          (goto-char beg)
+          (setq deactivate-mark 'nil)
+          (set-mark (point))
+          (goto-char (+ (point) (length region)))
+          )
+      (progn 
+        (if horizontal (forward-char linecount) (forward-line linecount))
+        (move-to-column col)
+        ))))
+
+(defun util-matching-char-position (matchchar closechar backward)
+  (save-excursion
+    (let ((count 0) currchar pos
+          (regexp (concat (regexp-quote matchchar) "\\|" (regexp-quote closechar)))
+          (myface (face-at-point))
+          )
+      (while (not pos)
+        (if backward
+            (search-backward-regexp regexp)
+          (progn
+            (forward-char 1)
+            (search-forward-regexp regexp)
+            (backward-char 1)))
+        (if (not (equal (face-at-point) myface)) 'nil
+          (if (string= (current-char) matchchar)
+              (setq count (1- count))
+            (if (= count 0) (progn (setq pos (point)))
+              (setq count (1+ count))))))
+      pos
+      )))
+
+(defun util-find-matching-position ()
+  (save-excursion
+    (let ((matchchar (current-char)) closechar backward pos)
+      (when (string= matchchar "(") (setq closechar ")"))
+      (when (string= matchchar ")") (setq closechar "(") (setq backward 't))
+      (when (string= matchchar "[") (setq closechar "]"))
+      (when (string= matchchar "]") (setq closechar "[") (setq backward 't))
+      (when (string= matchchar "{") (setq closechar "}"))
+      (when (string= matchchar "}") (setq closechar "{") (setq backward 't))
+      (when (string= matchchar "<") (setq closechar ">"))
+      (when (string= matchchar ">") (setq closechar "<") (setq backward 't))
+      (if (not closechar) (error "Not on a blinkable char, try one of '(){}[]<>'"))
+      (condition-case nil
+          (util-matching-char-position matchchar closechar backward)
+        (error (error "Couldn't find matching '%s'." closechar))))))
+
+(defun util-goto-matching-char ()
+  (interactive)
+  (let ((pos (util-find-matching-position)))
+    (goto-char pos)))
+
+(defun util-blink-matching-char ()
+  (interactive)
+  (save-excursion
+    (util-goto-matching-char)
+    (if blink-matching-paren-on-screen
+        (if (pos-visible-in-window-p) (sit-for 0.5)
+          (message "Matches: %s" (current-line))))))
+
