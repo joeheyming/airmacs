@@ -597,3 +597,40 @@ The characters copied are inserted in the buffer before point."
         (if (pos-visible-in-window-p) (sit-for 0.5)
           (message "Matches: %s" (current-line))))))
 
+
+(defun util-apply-hunk (&optional revert)
+  (interactive)
+  (save-excursion
+    (let ((filename (diff-find-file-name)) errormsg)
+      (condition-case err (diff-apply-hunk revert)
+        (error (setq errormsg (error-message-string err))))
+      (save-other-buffer (get-file-buffer filename))
+      (when (and errormsg (not (string= errormsg "No next hunk")))
+        (message errormsg)))))
+
+(defun util-revert-hunk ()
+  (interactive)
+  (util-apply-hunk 't))
+
+(defun util-revert-file ()
+  (interactive)
+  (save-excursion
+    (util-walk-diff-hunks 'util-revert-hunk)))
+(defun util-apply-file ()
+  (interactive)
+  (save-excursion
+    (util-walk-diff-hunks 'util-apply-hunk)))
+(defun util-walk-diff-hunks (func)
+  (let (beg)
+    (beginning-of-line 1)
+    (if (looking-at "Index: ") (forward-line))
+    (search-backward-regexp "^Index: ")
+    (forward-line)
+    (setq beg (point))
+    (condition-case nil (search-forward-regexp "^Index: ")
+      (error (goto-char (point-max))))
+    (while (> (point) beg)
+      (progn
+        (condition-case nil (search-backward-regexp "^@@ ")
+          (error (goto-char (point-min))))
+        (if (> (point) beg) (funcall func))))))
