@@ -139,6 +139,7 @@
 (global-set-key [end]      'util-goto-end)
 (global-set-key [f2] 'tinysearch-search-word-forward)
 (global-set-key [f3] '(lambda () (interactive) (set-mark-command t)))
+(global-set-key [f5] 'run-current-file)
 (global-set-key [f7] 'mdi-maximize-restore-toggle)
 (global-set-key [f8] 'util-kill-this-buffer)
 (global-set-key [f10] 'comment-region)
@@ -202,14 +203,14 @@
 
 (setq compilation-error-regexp-alist
       (append '(
-                ;; any detected file logs an info message
-                ("\\([~a-zA-Z0-9_\.\-]*/[/a-zA-Z0-9_\.\-]*\\)[:]?\\([0-9]+\\)?" 1 2 nil 0)
                 ("# Failed test [0-9]+ in \\(.*\\) at line \\([0-9]+\\)\\( fail #[0-9]+\\)?$" 1 2)
                 ("(\\([^()]*\\) at line \\([0-9]+\\)\\( fail #[0-9]+\\)?)$" 1 2)
                 ("\\(~?[^ ]+\\) line \\([0-9]+\\)" 1 2)
                 ("[Ll]ine \\([0-9]+\\) of \\(file:\\)?\\(/[/a-zA-Z0-9_\.\-]+\\)" 3 1)
                 ;; for gjslint tests, the errors follow the ------ FILE line, nil says use the last matched file
                 ("^Line \\([0-9]+\\), [EWF]" nil 1)
+                ;; any detected file logs an info message
+                ("\\([~a-zA-Z0-9_\.\-]*/[/a-zA-Z0-9_\.\-]*\\)[:]?\\([0-9]+\\)?" 1 2 nil 0)
                 )
               (remove 'gnu compilation-error-regexp-alist))) ;gnu breaks tests with mac addrs
 

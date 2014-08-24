@@ -93,9 +93,12 @@
     (if buffername (util-select-empty-output-buffer buffername)))
   (when (not quiet) (message "Running: %s" cmd))
   (delete-other-windows)
-  (call-process "sh" nil buffername nil
-                 "-c"
-                (format "cd ~; %s" cmd))
+  ;; (call-process "sh" nil buffername nil
+  ;;                "-c"
+  ;;               (format "cd ~; %s" cmd))
+
+  ;; (compilation-mode)
+  (compile cmd)
   (split-window-vertically)
   (other-window 1)
   (switch-to-buffer oldbuffer)
@@ -187,9 +190,6 @@
     )
 )
 
-
-(global-set-key [f5] 'run-current-file)
-
 (defun util-zap-to-char (arg char)
   "Kill up to *but not including* ARG'th occurrence of CHAR.
 Case is ignored if `case-fold-search' is non-nil in the current buffer.
@@ -209,45 +209,6 @@ Goes backward if ARG is negative; error if CHAR not found."
   (let ((case-fold-search isearch-case-fold-search))
     (occur (if isearch-regexp isearch-string (regexp-quote isearch-string)))))
 
-
-;;(defun util-toggle-quotes ()
-;;  "Converts double quotes to singles and vice versa"
-;;  (interactive)
-;; (save-excursion
-;;    (let ((start (point))
-;;          (face_at_point (last-element (face-at-point)))
-;;         beg end)
-;;      (while (eq face_at_point (last-element (face-at-point)))
-;;        (forward-char -1))
-;;      (forward-char 1)
-;;      (while (looking-at "[ \t\n]") (forward-char 1))
-;;      (setq beg (point))
-;;      (if (not (looking-at "[\"\']")) (search-forward-regexp "[\"\']" 'nil 't))
-;;      (if (<= (point) start) (setq beg (point)))
-;;
-;;      (goto-char start)
-;;
-;;      (while (eq face_at_point (last-element (face-at-point)))
-;;        (forward-char 1))
-;;      (forward-char -1)
-;;     (while (looking-at "[ \t\n]") (forward-char -1))
-;;      (setq end (point))
-;;      (if (not (looking-at "[\"\']")) (search-backward-regexp "[\"\']" 'nil 't))
-;;      (if (>= (point) start) (setq end (point)))
-;;
-;;      (goto-char beg)
-;;      (if (looking-at "\"")
-;;          (progn (delete-char 1) (insert-char ?\047 1))
-;;        (if (looking-at "\'")
-;;            (progn (delete-char 1) (insert-char ?\042 1))
-;;          (insert-char ?\042 1)))
-;;
-;;      (goto-char end)
-;;      (if (looking-at "\"")
-;;          (progn (delete-char 1) (insert-char ?\047 1))
-;;        (if (looking-at "\'")
-;;            (progn (delete-char 1) (insert-char ?\042 1))
-;;          (progn (forward-char 2) (insert-char ?\042 1))))
 
 (defun current-line-full ()
   (buffer-substring (line-beginning-position) (+ 1 (line-end-position))))
@@ -472,30 +433,6 @@ The characters copied are inserted in the buffer before point."
   (interactive)
   (if (string= (previous-key-string) "C-e") (forward-line 1))
   (end-of-line-ignore-whitespace))
-
-(defun util-goto-end (&optional ARG)
-  (interactive)
-  (let ((prevkey (previous-key-string)))
-    (if (or (string= prevkey "<end>")
-            (string= prevkey "<kp-end>")
-            (and (string= (previous-key-string 7) "ESC")
-                 (string= (previous-key-string 6) "[")
-                 (string= (previous-key-string 5) "4")
-                 (string= (previous-key-string 4) "~")))
-        (end-of-buffer ARG)
-      (end-of-line ARG))))
-
-(defun util-goto-beg (&optional ARG)
-  (interactive)
-  (let ((prevkey (previous-key-string)))
-    (if (or (string= prevkey "<home>")
-            (string= prevkey "<kp-home>")
-            (and (string= (previous-key-string 7) "ESC")
-                 (string= (previous-key-string 6) "[")
-                 (string= (previous-key-string 5) "1")
-                 (string= (previous-key-string 4) "~")))
-        (beginning-of-buffer ARG)
-      (beginning-of-line ARG))))
 
 
 (defun util-jump-to-top ()
