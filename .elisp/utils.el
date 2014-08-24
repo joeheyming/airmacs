@@ -629,7 +629,7 @@ The characters copied are inserted in the buffer before point."
     (search-backward-regexp "^[Ii]ndex:? ")
     (forward-line)
     (setq beg (point))
-    (condition-case nil (search-forward-regexp "^Index: ")
+    (condition-case nil (search-forward-regexp "^[Ii]ndex:? ")
       (error (goto-char (point-max))))
     (while (> (point) beg)
       (progn
