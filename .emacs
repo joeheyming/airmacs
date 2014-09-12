@@ -5,6 +5,7 @@
 (add-to-list 'load-path "~/.elisp")
 
 (require 'utils)
+(require 'string)
 
 (setq default-directory "~/")
 
@@ -220,3 +221,5 @@
              (modify-syntax-entry ?\_ "w")
              )
           )
+
+(require 'athena)

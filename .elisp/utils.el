@@ -573,3 +573,15 @@ The characters copied are inserted in the buffer before point."
         (condition-case nil (search-backward-regexp "^@@ ")
           (error (goto-char (point-min))))
         (if (> (point) beg) (funcall func))))))
+
+(defun active-region ()
+  (buffer-substring (point) (mark)))
+(defun current-keyword-or-quoted-active-region (&optional f)
+  (if mark-active (concat "'" (active-region) "'")
+    (let ((string (or (current-word nil t) "")))
+      (if f (funcall f string) string))))
+
+(defun string-join (str_list &optional join_str)
+  "Joins a list of strings"
+  (mapconcat 'identity str_list (or join_str " "))
+  )
