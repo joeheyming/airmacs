@@ -585,3 +585,9 @@ The characters copied are inserted in the buffer before point."
   "Joins a list of strings"
   (mapconcat 'identity str_list (or join_str " "))
   )
+
+(defun save-other-buffer (buffer)
+  (with-current-buffer buffer
+    (progn
+      (set-buffer-modified-p 't)
+      (save-buffer))))

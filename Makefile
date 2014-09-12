@@ -8,7 +8,7 @@ $(HOME)/.elisp:
 	-mkdir $(HOME)/.elisp
 
 $(HOME)/.elisp/%: .elisp/% $(HOME)/.elisp
-	cp -r $< $@ 
+	-/bin/cp -rf $< $@ 
 
 ~/.elisp/load-directory.el:
 	wget http://www.cb1.com/~john/computing/emacs/lisp/basics/load-directory.el -O ~/.elisp/load-directory.el
