@@ -68,7 +68,6 @@
           (filter-list (cdr list) predicate)
       )))
 
-(global-set-key [f7] 'mdi-maximize-restore-toggle)
 
 
 (defun util-kill-this-buffer ()
@@ -80,7 +79,6 @@
         (if (> (count-windows) 1) (delete-window))
         ))))
 
-(global-set-key [f8] 'util-kill-this-buffer)
 
 (defun util-shell-function (cmd &optional buffername quiet)
   "Run a function defined in our bash configuration"
@@ -199,9 +197,6 @@ Goes backward if ARG is negative; error if CHAR not found."
              (search-forward (char-to-string char) nil nil arg)
                          (backward-char 1)
              (point))))
-
-; don't iconify on C-z when running in X
-(when window-system (global-set-key "\C-z" 'util-zap-to-char))
 
 (defun isearch-occur ()
   "Invoke `occur' from within isearch."
