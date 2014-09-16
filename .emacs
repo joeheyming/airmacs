@@ -8,16 +8,6 @@
 (require 'load-directory)
 (load-directory "~/.elisp")
 
-(defmacro with-library (symbol &rest body)
-      `(condition-case nil
-           (progn
-             (require ',symbol)
-             ,@body)
-    
-         (error (message (format "I guess we don't have %s available." ',symbol))
-                nil)))
-    (put 'with-library 'lisp-indent-function 1)
-
 (setq default-directory "~/")
 
 ;; hide menu bar
@@ -233,3 +223,18 @@
              )
           )
 
+(setq air-dir-completions
+      '(
+        ("usr" "/usr")
+        ("etc" "/etc")
+        ("roo" "/root")
+        ("hom" "~/")
+        ("var" "/var")
+        ("log" "/var/log")
+        )
+      )
+
+(setq PC-word-delimiters "-_ ")
+(define-key minibuffer-local-completion-map " " 'air-findfile-completion)
+(setq minibuffer-local-filename-completion-map minibuffer-local-completion-map)
+(setq minibuffer-local-must-match-filename-map minibuffer-local-must-match-map)
