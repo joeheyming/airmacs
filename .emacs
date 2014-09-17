@@ -43,12 +43,37 @@
 (define-key isearch-mode-map (kbd "C-o") 'isearch-occur)
 (setq tinysearch-:wrap-flag t)
 
+;; highlight long lines
+(setq default-fill-column 115)
+(defface highlight-beyond-fill-column-my-face
+  '((((class color)
+      (background dark))
+     (:foreground "DarkSeaGreen2" :bold t))
+    (((class color)
+      (background light))
+     (:foreground "ForestGreen" :bold t))
+    (t
+     ()))
+  "*Face used by highlight-beyond-fill-column")
+(setq highlight-beyond-fill-column-face 'highlight-beyond-fill-column-my-face)
+(setq highlight-beyond-fill-column-in-modes
+      '("perl-mode"
+        "airwave-cperl-mode"
+        "cperl-mode"))
+
+;; Show trailing whitespace in normal buffers
+(setq-default show-trailing-whitespace nil)
+
+(setq-default auto-save-directory "~/.autosaves/")
+
+
 ;; No TABS
 (setq-default indent-tabs-mode nil)
 (setq-default indent-level 2)
 (setq-default c-indent-level 2)
 (setq-default css-indent-offset 2)
 
+(require 'comint)
 (setq confirm-kill-emacs 'yes-or-no-p)
 
 ;; Visual feedback on selections
@@ -56,6 +81,7 @@
 
 ; 'y' for 'yes', 'n' for 'no'
 (fset 'yes-or-no-p 'y-or-n-p)
+
 
 ; Show line and column numbers in modeline
 (line-number-mode t)
@@ -89,12 +115,15 @@
  (define-key iswitchb-mode-map "\C-f" 'iswitchb-find-file)
  (define-key iswitchb-mode-map "\C-j" 'iswitchb-exit-minibuffer))
 
+(autoload 'scss-mode "scss-mode")
+
 (add-to-list 'auto-mode-alist '("Makefile" . makefile-mode))
 (add-to-list 'auto-mode-alist '("\\.html\\'" . web-mode))
 (add-to-list 'auto-mode-alist '("\\.js\\'" . js2-mode))
 (add-to-list 'auto-mode-alist '("\\.json\\'" . js2-mode))
 (add-to-list 'auto-mode-alist '("\\.py\\'" . python-mode))
 (add-to-list 'auto-mode-alist '("bashrc" . sh-mode))
+(add-to-list 'auto-mode-alist '("\\.scss\\'" . scss-mode))
 
 ; don't iconify on C-z when running in X
 (when window-system (global-set-key "\C-z" 'util-zap-to-char))
@@ -246,3 +275,31 @@
 (define-key minibuffer-local-completion-map " " 'air-findfile-completion)
 (setq minibuffer-local-filename-completion-map minibuffer-local-completion-map)
 (setq minibuffer-local-must-match-filename-map minibuffer-local-must-match-map)
+
+(require 'diff-mode)
+(custom-set-faces
+  ;; custom-set-faces was added by Custom -- don't edit or cut/paste it!
+  ;; Your init file should contain only one such instance.
+ ;'(default ((t (:stipple nil :background "black" :foreground "white" :inverse-video nil :box nil :strike-through nil :overline nil :underline nil :slant normal :weight normal :width normal :family "default"))))
+  '(font-lock-comment-face ((t (:foreground "chocolate1"))))
+  '(compilation-info ((((class color) (min-colors 88) (background dark)) (:foreground "lightpink" :weight bold :underline nil))))
+  '(cperl-array-face ((t (:foreground "gold"))))
+  '(cperl-hash-face ((t (:foreground "firebrick1"))))
+  '(diff-added-face ((t (:foreground "dark turquoise"))))
+  '(diff-removed-face ((t (:foreground "violet"))))
+  '(diff-refine-change ((t (:background "gray30"))))
+  '(diff-file-header-face ((t (:foreground "firebrick" :weight bold))))
+  '(diff-header-face ((((class color) (background dark)) (:foreground "forest green"))))
+  '(diff-index-face ((t (:inherit diff-file-header-face :underline t))))
+  '(diff-function-face ((t (:inherit diff-context-face :foreground "DarkGoldenrod1"))))
+  '(trailing-whitespace ((((class color) (background dark)) (:background "grey30")))))
+
+
+;; setdefault window size
+(setq default-frame-alist (append (list
+  '(width . 95) '(height . 57)
+  '(vertical-scroll-bars . right)
+  '(font . "-misc-fixed-medium-r-normal--20-200-75-75-c-100-iso8859-1"))
+  default-frame-alist))
+
+
