@@ -20,10 +20,18 @@
 
 (setq default-directory "~/")
 
+;; quickly jump to lisp functions
+(require 'find-func)
+
 ;; hide menu bar
 (require 'menu-bar)
 (menu-bar-mode -1)
 (tool-bar-mode -1)
+
+(setq setnu-line-number-format "%3d")
+
+(require 'uniquify)
+(setq uniquify-buffer-name-style 'post-forward)
 
 ;; make apropros and super-apropos search through more stuff
 (setq apropos-do-all t)
