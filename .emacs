@@ -4,6 +4,7 @@
 (defvar running-xemacs (string-match "XEmacs\\|Lucid" emacs-version))
 (add-to-list 'load-path "~/.elisp")
 
+(require 'cl)
 (require 'utils)
 (require 'load-directory)
 (load-directory "~/.elisp")
