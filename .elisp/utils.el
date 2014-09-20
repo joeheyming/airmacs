@@ -611,3 +611,95 @@ The characters copied are inserted in the buffer before point."
       (if (buffer-modified-p buffer) (error "Buffer has file and buffer changes")
         (revert-buffer t t t))) ; revert if touched and not modified
   (vc-file-clearprops (buffer-file-name)))
+
+
+(defun fix_quotes (tofix)
+  (let (variable beg_c end_c variable_len)
+    (setq variable tofix)
+    (setq variable_len (length variable))
+    (setq beg_c (substring tofix 0 1))
+    (setq end_c (substring tofix (- variable_len 1)))
+    ;; handle the case where the beginning is quote, but the end is not
+    (if (and 
+         (not (equal end_c "'"))
+         (equal beg_c "'"))
+        (setq variable (format "%s'" variable)))
+    ;; handle the case where the end is quote, but the beginning is not
+    (if (and 
+         (not (equal beg_c "'"))
+         (equal end_c "'"))
+        (setq variable (format "'%s" variable)))
+    variable)
+  )
+
+;; current-variable matches this:
+;; perl: $var, @var, %var, $C'VAR, 'asdf', $var[0]
+;;  with expressions like @{$var{foo}}, depending on your cursor, you can get $var or foo
+;;   $other->[0] returns only $other, and $other->($a, $b) returns $other
+;;   $other->()[0] only returns $other
+;; javascript: somevar, namespace.foo.var, bar[0]
+;;   foo(a, b) only gets foo, a, or b depending on your cursor
+;; 'some str' will match 'some' when over some, 'str' when over str
+;; pretty much, anything but complex function calls
+(defun current-variable ()
+  (save-excursion
+    (skip-chars-backward "\':@$%[A-Za-z0-9_\.")
+    (let (beg end variable)
+      (setq beg (point))
+      (skip-chars-forward "\':$[]@%A-Za-z0-9_\.")
+      (setq end (point))
+      (setq variable (fix_quotes (buffer-substring beg end)))
+      )
+    ))
+
+;; current-expression matches this:
+;; perl: $var, @var, %var, $C'VAR, @{$var{foo}}, 'asdf', $bar[{$var{foo}}] +{}, +()
+;;   $other->[0] returns $other->[0], and $other->($a, $b) returns $other->($a, $b)
+;;   $other->()[0] only return s $other->()
+;; javascript: somevar, namespace.foo.var, bar[0]
+;;   foo(a, b) only works up to the last paren, so
+;;   foo(a, b) will match foo(a, b), but foo(a, b)[0] will only match foo(a, b)
+;; 'some str' will match 'some' when over some, 'str' when over str
+;; pretty much, anything but complex function calls
+(defun current-expression ()
+  (save-excursion
+    (skip-chars-backward "\':{[]}@$%A-Za-z0-9_\.\\->")
+    (let (beg end variable variable_len end_c)
+      (setq beg (point))
+      (skip-chars-forward "\'{}:$@%A-Za-z0-9_\.\\->")
+      (setq end (point))
+      (setq variable (buffer-substring beg end))
+      (setq variable_len (length variable))
+      ;; handle function calls
+      (setq end_c (buffer-substring end (+ end 1)))
+      (if (or (equal end_c "(") (equal end_c "[") (equal end_c "{") )
+          (progn
+            (setq beg (point))
+            (forward-list) ;; go to the ending paren
+            (setq end (point))
+            (setq variable (format "%s%s" variable (buffer-substring beg end)))
+            )
+          )
+      ;; make sure -> doesn't trail
+      (if (equal (substring variable (- variable_len 2)) "->")
+          (setq variable (substring variable 0 (- variable_len 2))))
+      (fix_quotes variable))))
+
+(defun current-line ()
+  (buffer-substring (line-beginning-position) (line-end-position)))
+(defun current-line-full ()
+  (buffer-substring (line-beginning-position) (+ 1 (line-end-position))))
+(defun current-line-prefix ()
+ (buffer-substring (line-beginning-position) (point)))
+(defun current-line-suffix () (buffer-substring (point) (line-end-position)))
+(defun current-line-number ()
+  (let ((linenum (string-to-int (substring (what-line) 5))))
+    (message "")
+    linenum))
+(defun current-number ()
+  (save-excursion
+    (let (beg)
+      (skip-chars-backward "0-9")
+      (setq beg (point))
+      (skip-chars-forward "0-9")
+      (buffer-substring-no-properties beg (point)))))

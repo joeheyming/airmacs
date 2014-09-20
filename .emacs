@@ -114,16 +114,27 @@
  (define-key iswitchb-mode-map "\C-f" 'iswitchb-find-file)
  (define-key iswitchb-mode-map "\C-j" 'iswitchb-exit-minibuffer))
 
+(autoload 'cperl-mode "cperl-mode")
+(autoload 'perl-mode "perl-mode")
+(autoload 'java-mode "java-mode")
+(autoload 'js2-mode "js2-mode")
+(autoload 'lisp-mode "lisp-mode")
+(autoload 'python-mode "python-mode")
+(autoload 'ruby-mode "ruby-mode")
 (autoload 'scss-mode "scss-mode")
+(autoload 'web-mode "web-mode")
 
 (add-to-list 'auto-mode-alist '("Makefile" . makefile-mode))
 (add-to-list 'auto-mode-alist '("\\.html" . web-mode))
 (add-to-list 'auto-mode-alist '("\\.js" . js2-mode))
 (add-to-list 'auto-mode-alist '("\\.json" . js2-mode))
 (add-to-list 'auto-mode-alist '("\\.py" . python-mode))
-(add-to-list 'auto-mode-alist '("bashrc" . sh-mode))
 (add-to-list 'auto-mode-alist '("\\.scss" . scss-mode))
-
+(add-to-list 'auto-mode-alist '("bashrc" . sh-mode))
+(add-to-list 'auto-mode-alist
+             '("\\.\\(?:gemspec\\|irbrc\\|gemrc\\|rake\\|rb\\|ru\\|thor\\)\\'" . ruby-mode))
+(add-to-list 'auto-mode-alist
+             '("\\(Capfile\\|Gemfile\\(?:\\.[a-zA-Z0-9._-]+\\)?\\|[rR]akefile\\)\\'" . ruby-mode))
 ; don't iconify on C-z when running in X
 (when window-system (global-set-key "\C-z" 'util-zap-to-char))
 
@@ -263,6 +274,7 @@
 (global-set-key [(super a) ?r ?f] 'util-revert-file)
 (global-set-key [(super a) ?r ?h] 'util-revert-hunk)
 (global-set-key [(super a) ?u ?b] 'util-update-buffers)
+(global-set-key [(super a) ?w ?a] 'airmacs-agnostic-warn)
 (global-set-key [C-backspace] 'util-backward-kill-word)
 (global-set-key [C-down] '(lambda () (interactive) (next-line 5)))
 (global-set-key [C-left] 'util-backward-word)

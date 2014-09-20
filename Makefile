@@ -18,3 +18,4 @@ external:
 	wget http://www.emacswiki.org/emacs/download/highlight-beyond-fill-column.el -O ~/.elisp/highlight-beyond-fill-column.el
 	wget http://www.emacswiki.org/emacs/download/auto-save.el -O ~/.elisp/auto-save.el
 	curl --insecure https://raw.githubusercontent.com/mooz/js2-mode/master/js2-mode.el -o ~/.elisp/js2-mode.el
+	curl --insecure https://raw.githubusercontent.com/emacsmirror/python-mode/master/python-mode.el -o ~/.elisp/python-mode.el
