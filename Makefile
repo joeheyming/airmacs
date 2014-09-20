@@ -17,3 +17,4 @@ external:
 	curl --insecure https://raw.githubusercontent.com/fxbois/web-mode/master/web-mode.el -o ~/.elisp/web-mode.el
 	wget http://www.emacswiki.org/emacs/download/highlight-beyond-fill-column.el -O ~/.elisp/highlight-beyond-fill-column.el
 	wget http://www.emacswiki.org/emacs/download/auto-save.el -O ~/.elisp/auto-save.el
+	curl --insecure https://raw.githubusercontent.com/mooz/js2-mode/master/js2-mode.el -o ~/.elisp/js2-mode.el
