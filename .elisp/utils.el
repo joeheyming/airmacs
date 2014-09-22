@@ -703,3 +703,16 @@ The characters copied are inserted in the buffer before point."
       (setq beg (point))
       (skip-chars-forward "0-9")
       (buffer-substring-no-properties beg (point)))))
+
+(defun util-mark-whole-line ()
+  (interactive)
+  (push-mark (line-beginning-position))
+  (forward-line 1)
+  (beginning-of-line)
+  (exchange-point-and-mark)
+  (exchange-point-and-mark))
+
+(defun util-kill-whole-line ()
+  (interactive)
+  (util-mark-whole-line)
+  (kill-region (mark) (point)))
