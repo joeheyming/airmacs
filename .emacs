@@ -275,7 +275,11 @@
 (global-set-key [(super a) ?r ?h] 'util-revert-hunk)
 (global-set-key [(super a) ?u ?b] 'util-update-buffers)
 (global-set-key [(super a) ?w ?a] 'airmacs-agnostic-warn)
-(global-set-key [(super e)] 'eval-region)
+(global-set-key [(super e)] '(lambda () 
+                               (interactive) 
+                               (eval-region (region-beginning) (region-end)) 
+                               (deactivate-mark)
+                               (message "Region Eval'd")))
 (global-set-key [(super k)] 'util-kill-whole-line)
 (global-set-key [C-backspace] 'util-backward-kill-word)
 (global-set-key [C-down] '(lambda () (interactive) (next-line 5)))
@@ -319,3 +323,7 @@
 (global-set-key [s-down] '(lambda () (interactive) (copy-from-above-or-below 1 1)))
 (global-set-key [s-up] '(lambda () (interactive) (copy-from-above-or-below 1)))
 (global-set-key [up] 'previous-line)
+
+
+(global-set-key [(super \,)] '(lambda () (interactive) (util-ensure-trailing-thing ",")))
+(global-set-key [(super \;)] '(lambda () (interactive) (util-ensure-trailing-thing ";")))

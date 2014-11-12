@@ -716,3 +716,19 @@ The characters copied are inserted in the buffer before point."
   (interactive)
   (util-mark-whole-line)
   (kill-region (mark) (point)))
+
+(defun util-ensure-trailing-thing (thing)
+  "Toggle a trailing thing on the line"
+  (interactive)
+  (save-excursion
+    (end-of-line)
+    (unless (bobp)
+      (backward-char 1)
+      (cond
+       ((looking-at thing)
+        (delete-char 1)
+        t)
+       (t
+        (forward-char 1)
+        (insert thing)))))
+  (next-line 1))
