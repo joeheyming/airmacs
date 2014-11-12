@@ -274,6 +274,7 @@
 (global-set-key [(super a) ?r ?f] 'util-revert-file)
 (global-set-key [(super a) ?r ?h] 'util-revert-hunk)
 (global-set-key [(super a) ?u ?b] 'util-update-buffers)
+(global-set-key [(super a) ?p ?x] 'util-pretty-xml)
 (global-set-key [(super a) ?w ?a] 'airmacs-agnostic-warn)
 (global-set-key [(super e)] 'eval-region)
 (global-set-key [(super k)] 'util-kill-whole-line)

@@ -716,3 +716,20 @@ The characters copied are inserted in the buffer before point."
   (interactive)
   (util-mark-whole-line)
   (kill-region (mark) (point)))
+
+(defun util-pretty-xml ()
+  "Prettify ugly xml in buffer"
+  (interactive)
+  (save-excursion
+    (beginning-of-buffer)
+    (while (search-forward-regexp "><" 'nil t)
+      (backward-char)
+      (insert "\n"))
+    (mark-whole-buffer)
+    (indent-for-tab-command)
+    (while (search-forward-regexp "\" " 'nil t)
+      (if (> (current-column) 80)
+          (progn
+            (insert "\n")
+            (indent-for-tab-command)
+            )))))
