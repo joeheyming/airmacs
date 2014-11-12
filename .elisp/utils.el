@@ -733,3 +733,19 @@ The characters copied are inserted in the buffer before point."
             (insert "\n")
             (indent-for-tab-command)
             )))))
+
+(defun util-ensure-trailing-thing (thing)
+  "Toggle a trailing thing on the line"
+  (interactive)
+  (save-excursion
+    (end-of-line)
+    (unless (bobp)
+      (backward-char 1)
+      (cond
+       ((looking-at thing)
+        (delete-char 1)
+        t)
+       (t
+        (forward-char 1)
+        (insert thing)))))
+  (next-line 1))
