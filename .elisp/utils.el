@@ -83,24 +83,7 @@
 (defun util-shell-function (cmd &optional buffername quiet)
   "Run a function defined in our bash configuration"
   (interactive (list (read-string "% ")))
-  (if (not buffername) (setq buffername "*shell function output*"))
-  (setq oldbuffer (buffer-name))
-  (if (string= buffername "discard output") (setq buffername 'nil))
-  (if (string= buffername "stdout")
-      (setq buffername 't)
-    (if buffername (util-select-empty-output-buffer buffername)))
-  (when (not quiet) (message "Running: %s" cmd))
-  (delete-other-windows)
-  ;; (call-process "sh" nil buffername nil
-  ;;                "-c"
-  ;;               (format "cd ~; %s" cmd))
-
-  ;; (compilation-mode)
   (compile cmd)
-  (split-window-vertically)
-  (other-window 1)
-  (switch-to-buffer oldbuffer)
-  (when (not quiet) (message "Done."))
   )
 (defun util-shell-function-basic (cmd &optional args)
   (let ((bufname (format "*%s*" cmd)))

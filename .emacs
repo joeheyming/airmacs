@@ -135,6 +135,12 @@
              '("\\.\\(?:gemspec\\|irbrc\\|gemrc\\|rake\\|rb\\|ru\\|thor\\)\\'" . ruby-mode))
 (add-to-list 'auto-mode-alist
              '("\\(Capfile\\|Gemfile\\(?:\\.[a-zA-Z0-9._-]+\\)?\\|[rR]akefile\\)\\'" . ruby-mode))
+
+(add-hook 'python-mode-hook 
+          '(lambda ()
+             (local-set-key [C-backspace] 'util-backward-kill-word)
+             ))
+
 ; don't iconify on C-z when running in X
 (when window-system (global-set-key "\C-z" 'util-zap-to-char))
 
@@ -192,6 +198,7 @@
       (append '(
                 ("# Failed test [0-9]+ in \\(.*\\) at line \\([0-9]+\\)\\( fail #[0-9]+\\)?$" 1 2)
                 ("(\\([^()]*\\) at line \\([0-9]+\\)\\( fail #[0-9]+\\)?)$" 1 2)
+                ("\"\\(~?[^ ]+\\)\", line \\([0-9]+\\)" 1 2)
                 ("\\(~?[^ ]+\\) line \\([0-9]+\\)" 1 2)
                 ("[Ll]ine \\([0-9]+\\) of \\(file:\\)?\\(/[/a-zA-Z0-9_\.\-]+\\)" 3 1)
                 ;; for gjslint tests, the errors follow the ------ FILE line, nil says use the last matched file
@@ -254,6 +261,17 @@
 (require 'load-directory)
 (load-directory "~/.elisp")
 
+(defun hippie-unexpand ()
+  (interactive)
+  (hippie-expand 0))
+
+(define-key read-expression-map [(shift tab)] 'hippie-unexpand)
+(define-key read-expression-map [(tab)] 'hippie-expand)
+
+(global-set-key [(ctrl return)] (make-hippie-expand-function
+                               '(try-expand-dabbrev-visible
+                                 try-expand-dabbrev
+                                 try-expand-dabbrev-all-buffers) t))
 
 (global-set-key "\C-a" 'util-beginning-or-toindent)
 (global-set-key "\C-e" 'util-ending-or-nextline-end)
