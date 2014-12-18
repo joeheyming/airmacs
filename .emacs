@@ -105,6 +105,18 @@
 (setq mac-command-modifier 'meta)
 (setq kill-whole-line t)
 
+
+;; Tab completion
+(setq hippie-expand-try-functions-list (list
+  'util-try-expand-hashitems
+  'try-expand-dabbrev-visible
+  'try-expand-dabbrev
+  'try-expand-dabbrev-all-buffers
+  'try-expand-dabbrev-from-kill
+  'try-complete-file-name-partially
+  'try-complete-file-name
+))
+
 ;; iswitchb
 (iswitchb-mode)
 (add-hook 'iswitchb-define-mode-map-hook 'iswitchb-util-keys)
@@ -261,44 +273,40 @@
 (require 'load-directory)
 (load-directory "~/.elisp")
 
-(defun hippie-unexpand ()
-  (interactive)
-  (hippie-expand 0))
-
-(define-key read-expression-map [(shift tab)] 'hippie-unexpand)
-(define-key read-expression-map [(tab)] 'hippie-expand)
-
-(global-set-key [(ctrl return)] (make-hippie-expand-function
-                               '(try-expand-dabbrev-visible
-                                 try-expand-dabbrev
-                                 try-expand-dabbrev-all-buffers) t))
+(defun eval-region-verbose ()
+  (interactive) 
+  (eval-region (region-beginning) (region-end)) (deactivate-mark) 
+  (message "Region Eval'd"))
 
 (global-set-key "\C-a" 'util-beginning-or-toindent)
 (global-set-key "\C-e" 'util-ending-or-nextline-end)
 (global-set-key "\C-k" 'util-kill-line-or-region)
 (global-set-key "\M-z"     'util-zap-to-char)
+(global-set-key (kbd "C-%") 'util-region-replace)
 (global-set-key (kbd "C-'") 'util-toggle-kbd-macro-recording)
+(global-set-key (kbd "C-s-%") 'util-region-replace-regex)
 (global-set-key (kbd "C-s-0") 'util-goto-matching-char)
 (global-set-key (kbd "s-0") 'util-blink-matching-char)
 (global-set-key [(ctrl shift n)] '(lambda () (interactive) (next-line 5)))
 (global-set-key [(ctrl shift p)] '(lambda () (interactive) (previous-line 5)))
 (global-set-key [(meta \')] 'call-last-kbd-macro)
-(global-set-key [(shift f3)] 'pop-global-mark)
 (global-set-key [(shift f10)] 'uncomment-region)
+(global-set-key [(shift f3)] 'pop-global-mark)
+(global-set-key [(super \,)] '(lambda () (interactive) (util-ensure-trailing-thing ",")))
+(global-set-key [(super \;)] '(lambda () (interactive) (util-ensure-trailing-thing ";")))
 (global-set-key [(super a) ?a ?f] 'util-apply-file)
 (global-set-key [(super a) ?a ?h] 'util-apply-hunk)
 (global-set-key [(super a) ?a ?i] 'util-apply-file)
+(global-set-key [(super a) ?c ?r ] 'vc-resolve-conflicts)
 (global-set-key [(super a) ?f ?d ] 'vc-diff)
+(global-set-key [(super a) ?g ?d ] 'util-full-git-diff)
+(global-set-key [(super a) ?p ?x] 'util-pretty-xml)
 (global-set-key [(super a) ?r ?f] 'util-revert-file)
 (global-set-key [(super a) ?r ?h] 'util-revert-hunk)
+(global-set-key [(super a) ?s ?a ] 'vc-annotate)
 (global-set-key [(super a) ?u ?b] 'util-update-buffers)
-(global-set-key [(super a) ?p ?x] 'util-pretty-xml)
 (global-set-key [(super a) ?w ?a] 'airmacs-agnostic-warn)
-(global-set-key [(super e)] '(lambda () 
-                               (interactive) 
-                               (eval-region (region-beginning) (region-end)) 
-                               (deactivate-mark)
-                               (message "Region Eval'd")))
+(global-set-key [(super e)] 'eval-region-verbose)
 (global-set-key [(super k)] 'util-kill-whole-line)
 (global-set-key [C-backspace] 'util-backward-kill-word)
 (global-set-key [C-down] '(lambda () (interactive) (next-line 5)))
@@ -325,14 +333,14 @@
 (global-set-key [M-up] 'util-goto-matching-char)
 (global-set-key [down] 'next-line)
 (global-set-key [end]      'util-goto-end)
+(global-set-key [f10] 'comment-region)
+(global-set-key [f11] 'other-window)
+(global-set-key [f12] 'font-lock-mode)
 (global-set-key [f2] 'tinysearch-search-word-forward)
 (global-set-key [f3] '(lambda () (interactive) (set-mark-command t)))
 (global-set-key [f5] 'run-current-file)
 (global-set-key [f7] 'mdi-maximize-restore-toggle)
 (global-set-key [f8] 'util-kill-this-buffer)
-(global-set-key [f10] 'comment-region)
-(global-set-key [f11] 'other-window)
-(global-set-key [f12] 'font-lock-mode)
 (global-set-key [home]     'util-goto-beg)
 (global-set-key [insert] 'nil)
 (global-set-key [kp-end]   'util-goto-end)
@@ -342,7 +350,52 @@
 (global-set-key [s-down] '(lambda () (interactive) (copy-from-above-or-below 1 1)))
 (global-set-key [s-up] '(lambda () (interactive) (copy-from-above-or-below 1)))
 (global-set-key [up] 'previous-line)
+(global-set-key [up] 'previous-line)
 
 
-(global-set-key [(super \,)] '(lambda () (interactive) (util-ensure-trailing-thing ",")))
-(global-set-key [(super \;)] '(lambda () (interactive) (util-ensure-trailing-thing ";")))
+;; javascript mode
+(autoload 'js2-mode "js2" nil t)
+(setq js2-use-font-lock-faces t)
+(setq js2-mirror-mode nil)
+(setq-default js2-basic-offset 2)
+(add-hook 'js2-mode-hook
+          '(lambda ()
+            (modify-syntax-entry ?\_ "w")
+            (define-key
+              js2-mode-map [tab] 'util-indent-javascript-region-or-line)
+            (local-set-key [(return)] 'newline-and-indent)))
+
+;; css mode
+(add-hook 'css-mode-hook
+          '(lambda ()
+             (local-set-key [tab] 'util-indent-css-region-or-line)
+))
+
+(defun in-js2-file () (derived-mode-p 'js2-mode))
+
+(defun insert-if-js2 (str) 
+  (if (in-js2-file)
+      (progn
+        (backward-delete-char 3)
+        (insert str)
+        (loop for i in str do (forward-char 1))
+        "")))
+
+
+(util-populate-hash
+ util-tab-completions
+ '(("" 'nil)
+   ("/*" ("/**\n *\n */"))
+   ("**" ("**\n *"))
+   ("\n *" ("\n *\n *"))
+
+   ("fun" (lambda () (insert-if-js2 "function(){ }")))
+   ("try" (lambda () (insert-if-js2 "try { } catch () { }")))
+   ("*@p" (lambda () (insert-if-js2 "* @param {} .")))
+   ("*@r" (lambda () (insert-if-js2 "* @return {} .")))
+   ("*@t" (lambda () (insert-if-js2 "/** @type {} */")))
+   ("*@c" (lambda () (insert-if-js2 "/** @const */")))
+   ("con" (lambda () (insert-if-js2 "console.log()")))
+   ("wcl" (lambda () (insert-if-js2 "window.console.log()")))
+   ))
+
