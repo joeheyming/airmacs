@@ -281,6 +281,7 @@
 (global-set-key "\C-a" 'util-beginning-or-toindent)
 (global-set-key "\C-e" 'util-ending-or-nextline-end)
 (global-set-key "\C-k" 'util-kill-line-or-region)
+(global-set-key "\M-\C-s"  'util-findcode)
 (global-set-key "\M-z"     'util-zap-to-char)
 (global-set-key (kbd "C-%") 'util-region-replace)
 (global-set-key (kbd "C-'") 'util-toggle-kbd-macro-recording)
@@ -299,7 +300,7 @@
 (global-set-key [(super a) ?a ?i] 'util-apply-file)
 (global-set-key [(super a) ?c ?r ] 'vc-resolve-conflicts)
 (global-set-key [(super a) ?f ?d ] 'vc-diff)
-(global-set-key [(super a) ?g ?d ] 'util-full-git-diff)
+(global-set-key [(super a) ?r ?d ] 'vc-root-diff)
 (global-set-key [(super a) ?p ?x] 'util-pretty-xml)
 (global-set-key [(super a) ?r ?f] 'util-revert-file)
 (global-set-key [(super a) ?r ?h] 'util-revert-hunk)
@@ -315,8 +316,6 @@
 (global-set-key [C-prior] 'util-jump-to-top)
 (global-set-key [C-right] 'util-forward-word)
 (global-set-key [C-s-down] '(lambda () (interactive) (copy-from-above-or-below 'nil 1)))
-(global-set-key [C-s-down] '(lambda () (interactive) (copy-from-above-or-below 'nil 1)))
-(global-set-key [C-s-up] '(lambda () (interactive) (copy-from-above-or-below)))
 (global-set-key [C-s-up] '(lambda () (interactive) (copy-from-above-or-below)))
 (global-set-key [C-up] '(lambda () (interactive) (previous-line 5)))
 (global-set-key [M-S-down] 'util-scootch-down)
@@ -350,8 +349,6 @@
 (global-set-key [s-down] '(lambda () (interactive) (copy-from-above-or-below 1 1)))
 (global-set-key [s-up] '(lambda () (interactive) (copy-from-above-or-below 1)))
 (global-set-key [up] 'previous-line)
-(global-set-key [up] 'previous-line)
-
 
 ;; javascript mode
 (autoload 'js2-mode "js2" nil t)

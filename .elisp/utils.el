@@ -733,23 +733,6 @@ The characters copied are inserted in the buffer before point."
         (insert thing)))))
   (next-line 1))
 
-(defun util-full-git-diff() 
-  (interactive)  
-  (util-save-and-save-some-buffers)
-  (let (bn (current-buffer-name))
-    (delete-other-windows)
-    (split-window-vertically)
-    (balance-windows)
-    (other-window 1)
-    (shell-command (format "git rev-parse --show-toplevel | xargs git diff") "*full diff*")
-    (switch-to-buffer "*full diff*")
-    (other-window 1)
-    (diff-mode)
-    (switch-to-buffer bn)
-    (other-window 1)
-    )
-)
-
 (defun util-generic-indent-region-or-line (indent-command)
   (if mark-active
       (progn  ; set beg end to marked region
@@ -852,4 +835,39 @@ The characters copied are inserted in the buffer before point."
       (if (<= (point) (marker-position end)) (replace-match to nil nil)))
     (goto-char lastm)
     ))
+
+(defun vc-root ()
+  (interactive)
+  (condition-case nil
+      (let ((backend (vc-responsible-backend (buffer-file-name))))
+        (vc-call-backend backend 'root (buffer-file-name)))
+    (error nil))
+   )
+
+(defun vc-root-or-current-dir ()
+  "Get the vc root or the current directory"
+  (interactive)
+  (let ((the-root (vc-root)))
+    (if the-root
+      the-root
+      (file-name-directory (or load-file-name buffer-file-name)))))
+
+(defun strip-c-apostrophe (s) (replace-regexp-in-string "^C'" "" s))
+
+(defun findcode-on (findcode-command) 
+  "Delegate findcode to"
+  (message (format "Findcode: %s" findcode-command))
+     (let ((compilation-buffer-name-function
+          (lambda (mode-name)
+            (format "*%s*" findcode-command)))
+           (default-directory (vc-root-or-current-dir)))
+       (grep findcode-command)))
+
+(defun util-findcode (findcode-command)
+  "Run findcode on your current repo, or default path, if defined"
+  (interactive
+   (list (read-string
+          (concat "Run findcode in " (vc-root) " as: ")
+          (format "grep --mmap -Rn %s ." (current-keyword-or-quoted-active-region 'strip-c-apostrophe)))))
+  (findcode-on findcode-command))
 
