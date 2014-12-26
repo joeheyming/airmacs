@@ -767,6 +767,9 @@ The characters copied are inserted in the buffer before point."
   (interactive)
   (util-generic-indent-region-or-line (function css-indent-line)))
 
+(defun util-indent-python-region-or-line ()
+  (interactive)
+  (util-generic-indent-region-or-line (function python-indent-line)))
 
 (defun util-try-expand-hashitems (old)
   (let (wordsize)
@@ -871,3 +874,14 @@ The characters copied are inserted in the buffer before point."
           (format "grep --mmap -Rn %s ." (current-keyword-or-quoted-active-region 'strip-c-apostrophe)))))
   (findcode-on findcode-command))
 
+(defun chmod (mode)
+  "Set the mode of the current file, in octal, as per the chmod program.
+If the current file doesn't exist yet the buffer is saved to create it."
+  (interactive "sMode (3 or 4 octal digits): ")
+  (or (string-match "[0-3]?[0-7][0-7][0-7]" mode)
+      (error "Invalid mode"))
+  ;; make sure the file exists
+  (unless (file-exists-p (buffer-file-name))
+    (save-buffer))
+  (set-file-modes (buffer-file-name) (string-to-number mode 8))
+  (message (format "File permission set to %s" mode)))

@@ -298,6 +298,7 @@
 (global-set-key [(super a) ?a ?f] 'util-apply-file)
 (global-set-key [(super a) ?a ?h] 'util-apply-hunk)
 (global-set-key [(super a) ?a ?i] 'util-apply-file)
+(global-set-key [(super a) ?c ?m ] 'chmod)
 (global-set-key [(super a) ?c ?r ] 'vc-resolve-conflicts)
 (global-set-key [(super a) ?f ?d ] 'vc-diff)
 (global-set-key [(super a) ?r ?d ] 'vc-root-diff)
@@ -350,6 +351,16 @@
 (global-set-key [s-up] '(lambda () (interactive) (copy-from-above-or-below 1)))
 (global-set-key [up] 'previous-line)
 
+;; Lisp specific stuff
+(defun my-emacs-lisp-mode-hook ()
+  (define-key emacs-lisp-mode-map [tab] 'util-indent-lisp-region-or-line)
+  )
+(defun my-lisp-mode-hook ()
+  (define-key lisp-mode-map [tab] 'util-indent-lisp-region-or-line)
+  )
+(add-hook 'emacs-lisp-mode-hook 'my-emacs-lisp-mode-hook)
+(add-hook 'lisp-mode-hook 'my-lisp-mode-hook)
+
 ;; javascript mode
 (autoload 'js2-mode "js2" nil t)
 (setq js2-use-font-lock-faces t)
@@ -377,6 +388,11 @@
         (insert str)
         (loop for i in str do (forward-char 1))
         "")))
+
+(defun my-python-mode-hook ()
+  (define-key python-mode-map [tab] 'util-indent-python-region-or-line)
+  )
+(add-hook 'python-mode-hook 'my-python-mode-hook)
 
 
 (util-populate-hash
