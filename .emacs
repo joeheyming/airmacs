@@ -117,14 +117,8 @@
   'try-complete-file-name
 ))
 
-;; iswitchb
-(iswitchb-mode)
-(add-hook 'iswitchb-define-mode-map-hook 'iswitchb-util-keys)
-(defun iswitchb-util-keys ()
- "Add my keybindings for iswitchb."
- (define-key iswitchb-mode-map " " 'iswitchb-next-match)
- (define-key iswitchb-mode-map "\C-f" 'iswitchb-find-file)
- (define-key iswitchb-mode-map "\C-j" 'iswitchb-exit-minibuffer))
+;; ido
+(ido-mode)
 
 (autoload 'cperl-mode "cperl-mode")
 (autoload 'perl-mode "perl-mode")
