@@ -118,6 +118,7 @@
 ))
 
 ;; iswitchb
+;(ido-mode)
 (iswitchb-mode)
 (add-hook 'iswitchb-define-mode-map-hook 'iswitchb-util-keys)
 (defun iswitchb-util-keys ()
@@ -131,16 +132,14 @@
 (autoload 'java-mode "java-mode")
 (autoload 'js2-mode "js2-mode")
 (autoload 'lisp-mode "lisp-mode")
-(autoload 'python-mode "python-mode")
 (autoload 'ruby-mode "ruby-mode")
 (autoload 'scss-mode "scss-mode")
 (autoload 'web-mode "web-mode")
 
 (add-to-list 'auto-mode-alist '("Makefile" . makefile-mode))
-(add-to-list 'auto-mode-alist '("\\.html" . web-mode))
+(add-to-list 'auto-mode-alist '("\\.\\(html\\|mustache\\)" . web-mode))
 (add-to-list 'auto-mode-alist '("\\.js" . js2-mode))
 (add-to-list 'auto-mode-alist '("\\.json" . js2-mode))
-(add-to-list 'auto-mode-alist '("\\.py" . python-mode))
 (add-to-list 'auto-mode-alist '("\\.scss" . scss-mode))
 (add-to-list 'auto-mode-alist '("bashrc" . sh-mode))
 (add-to-list 'auto-mode-alist
@@ -148,10 +147,6 @@
 (add-to-list 'auto-mode-alist
              '("\\(Capfile\\|Gemfile\\(?:\\.[a-zA-Z0-9._-]+\\)?\\|[rR]akefile\\)\\'" . ruby-mode))
 
-(add-hook 'python-mode-hook 
-          '(lambda ()
-             (local-set-key [C-backspace] 'util-backward-kill-word)
-             ))
 
 ; don't iconify on C-z when running in X
 (when window-system (global-set-key "\C-z" 'util-zap-to-char))
@@ -237,6 +232,7 @@
         ("log" "/var/log")
         )
       )
+      
 
 (setq PC-word-delimiters "-_ ")
 (define-key minibuffer-local-completion-map " " 'air-findfile-completion)
@@ -272,9 +268,12 @@
 
 (defun comment-line (comment_fn)
   (interactive)
-  (set-mark (line-beginning-position))
-  (end-of-line) 
-  (funcall comment_fn (region-beginning) (region-end)) (deactivate-mark))
+  (save-excursion
+    (set-mark (line-beginning-position))
+    (end-of-line) 
+    (funcall comment_fn (region-beginning) (region-end))
+    (deactivate-mark))
+  (next-line))
 
 (require 'load-directory)
 (load-directory "~/.elisp")
