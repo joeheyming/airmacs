@@ -117,8 +117,14 @@
   'try-complete-file-name
 ))
 
-;; ido
-(ido-mode)
+;; iswitchb
+(iswitchb-mode)
+(add-hook 'iswitchb-define-mode-map-hook 'iswitchb-util-keys)
+(defun iswitchb-util-keys ()
+ "Add my keybindings for iswitchb."
+ (define-key iswitchb-mode-map " " 'iswitchb-next-match)
+ (define-key iswitchb-mode-map "\C-f" 'iswitchb-find-file)
+ (define-key iswitchb-mode-map "\C-j" 'iswitchb-exit-minibuffer))
 
 (autoload 'cperl-mode "cperl-mode")
 (autoload 'perl-mode "perl-mode")
@@ -264,6 +270,12 @@
   default-frame-alist))
 
 
+(defun comment-line (comment_fn)
+  (interactive)
+  (set-mark (line-beginning-position))
+  (end-of-line) 
+  (funcall comment_fn (region-beginning) (region-end)) (deactivate-mark))
+
 (require 'load-directory)
 (load-directory "~/.elisp")
 
@@ -285,7 +297,7 @@
 (global-set-key [(ctrl shift n)] '(lambda () (interactive) (next-line 5)))
 (global-set-key [(ctrl shift p)] '(lambda () (interactive) (previous-line 5)))
 (global-set-key [(meta \')] 'call-last-kbd-macro)
-(global-set-key [(shift f10)] 'uncomment-region)
+(global-set-key [(shift f10)] '(lambda () (interactive) (comment-line 'uncomment-region)))
 (global-set-key [(shift f3)] 'pop-global-mark)
 (global-set-key [(super \,)] '(lambda () (interactive) (util-ensure-trailing-thing ",")))
 (global-set-key [(super \;)] '(lambda () (interactive) (util-ensure-trailing-thing ";")))
@@ -327,7 +339,7 @@
 (global-set-key [M-up] 'util-goto-matching-char)
 (global-set-key [down] 'next-line)
 (global-set-key [end]      'util-goto-end)
-(global-set-key [f10] 'comment-region)
+(global-set-key [f10] '(lambda () (interactive) (comment-line 'comment-region)))
 (global-set-key [f11] 'other-window)
 (global-set-key [f12] 'font-lock-mode)
 (global-set-key [f2] 'tinysearch-search-word-forward)
