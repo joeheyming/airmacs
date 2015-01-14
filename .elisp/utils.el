@@ -857,21 +857,23 @@ The characters copied are inserted in the buffer before point."
 
 (defun strip-c-apostrophe (s) (replace-regexp-in-string "^C'" "" s))
 
-(defun findcode-on (findcode-command) 
+(defun findcode-on (my-findcode-command) 
   "Delegate findcode to"
-  (message (format "Findcode: %s" findcode-command))
-     (let ((compilation-buffer-name-function
-          (lambda (mode-name)
-            (format "*%s*" findcode-command)))
-           (default-directory (vc-root-or-current-dir)))
-       (grep findcode-command)))
+  (message (format "Findcode: %s" my-findcode-command))
+  (let ((compilation-buffer-name-function
+         (lambda (mode-name)
+           (format "*%s*" my-findcode-command)))
+        (default-directory (vc-root-or-current-dir)))
+    (message (format "Default directory: %s" default-directory))
+    (grep my-findcode-command)))
 
+(setq findcode-command "grep --mmap -Rn %s .")
 (defun util-findcode (findcode-command)
   "Run findcode on your current repo, or default path, if defined"
   (interactive
    (list (read-string
           (concat "Run findcode in " (vc-root) " as: ")
-          (format "grep --mmap -Rn %s ." (current-keyword-or-quoted-active-region 'strip-c-apostrophe)))))
+          (format findcode-command (current-keyword-or-quoted-active-region 'strip-c-apostrophe)))))
   (findcode-on findcode-command))
 
 (defun chmod (mode)

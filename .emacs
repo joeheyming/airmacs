@@ -100,6 +100,7 @@
 
 (setq js2-mirror-mode t)
 (require 'web-mode)
+(setq web-mode-comment-style 2)
 
 (setq mac-option-modifier 'super)
 (setq mac-command-modifier 'meta)
@@ -269,8 +270,10 @@
 (defun comment-line (comment_fn)
   (interactive)
   (save-excursion
-    (set-mark (line-beginning-position))
-    (end-of-line) 
+    (if (not mark-active)
+        (progn
+          (set-mark (line-beginning-position))
+          (end-of-line)))
     (funcall comment_fn (region-beginning) (region-end))
     (deactivate-mark))
   (next-line))
