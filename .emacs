@@ -309,6 +309,7 @@
 (global-set-key [(super a) ?c ?m ] 'chmod)
 (global-set-key [(super a) ?c ?r ] 'vc-resolve-conflicts)
 (global-set-key [(super a) ?f ?d ] 'vc-diff)
+(global-set-key [(super a) ?f ?g ] 'util-findgrep)
 (global-set-key [(super a) ?r ?d ] 'vc-root-diff)
 (global-set-key [(super a) ?p ?x] 'util-pretty-xml)
 (global-set-key [(super a) ?r ?f] 'util-revert-file)

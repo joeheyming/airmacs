@@ -872,9 +872,29 @@ The characters copied are inserted in the buffer before point."
   "Run findcode on your current repo, or default path, if defined"
   (interactive
    (list (read-string
-          (concat "Run findcode in " (vc-root) " as: ")
+          (concat "Run findcode in " (vc-root-or-current-dir) " as: ")
           (format findcode-command (current-keyword-or-quoted-active-region 'strip-c-apostrophe)))))
   (findcode-on findcode-command))
+
+(defun findgrep-on (my-findgrep-command) 
+  "Delegate findgrep to"
+  (message (format "Findgrep: %s" my-findgrep-command))
+  (let ((compilation-buffer-name-function
+         (lambda (mode-name)
+           (format "*%s*" my-findgrep-command)))
+        (default-directory (vc-root-or-current-dir)))
+    (message (format "Default directory: %s" default-directory))
+    (compile my-findgrep-command)))
+
+(setq findgrep-command "find %s | grep -i %s")
+(defun util-findgrep (findgrep-command)
+  "Run findgrep on your current repo, or default path, if defined"
+  (interactive
+   (list (read-string
+          (concat "Run findgrep in " (vc-root-or-current-dir) " as: ")
+          (format findgrep-command (vc-root-or-current-dir) (current-keyword-or-quoted-active-region 'strip-c-apostrophe)))))
+  (findgrep-on findgrep-command))
+
 
 (defun chmod (mode)
   "Set the mode of the current file, in octal, as per the chmod program.
