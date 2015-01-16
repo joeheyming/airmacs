@@ -755,21 +755,9 @@ The characters copied are inserted in the buffer before point."
          (funcall indent-command))))))
 
 
-(defun util-indent-lisp-region-or-line ()
+(defun util-indent-region-or-line ()
   (interactive)
-  (util-generic-indent-region-or-line (function lisp-indent-line)))
-
-(defun util-indent-javascript-region-or-line ()
-  (interactive)
-  (util-generic-indent-region-or-line (function js2-indent-line)))
-
-(defun util-indent-css-region-or-line ()
-  (interactive)
-  (util-generic-indent-region-or-line (function css-indent-line)))
-
-(defun util-indent-python-region-or-line ()
-  (interactive)
-  (util-generic-indent-region-or-line (function python-indent-line)))
+  (util-generic-indent-region-or-line (function indent-according-to-mode)))
 
 (defun util-try-expand-hashitems (old)
   (let (wordsize)

@@ -137,11 +137,13 @@
 (autoload 'scss-mode "scss-mode")
 (autoload 'web-mode "web-mode")
 
+(add-to-list 'auto-mode-alist '("\\.log\\'" . auto-revert-mode))
 (add-to-list 'auto-mode-alist '("Makefile" . makefile-mode))
-(add-to-list 'auto-mode-alist '("\\.\\(html\\|mustache\\)" . web-mode))
+(add-to-list 'auto-mode-alist '("\\.\\(html\\|mustache\\)" . html-mode))
 (add-to-list 'auto-mode-alist '("\\.js" . js2-mode))
 (add-to-list 'auto-mode-alist '("\\.json" . js2-mode))
 (add-to-list 'auto-mode-alist '("\\.scss" . scss-mode))
+(add-to-list 'auto-mode-alist '("\\.less" . css-mode))
 (add-to-list 'auto-mode-alist '("bashrc" . sh-mode))
 (add-to-list 'auto-mode-alist
              '("\\.\\(?:gemspec\\|irbrc\\|gemrc\\|rake\\|rb\\|ru\\|thor\\)\\'" . ruby-mode))
@@ -310,6 +312,7 @@
 (global-set-key [(super a) ?c ?r ] 'vc-resolve-conflicts)
 (global-set-key [(super a) ?f ?d ] 'vc-diff)
 (global-set-key [(super a) ?f ?g ] 'util-findgrep)
+(global-set-key [(super a) ?g ?s ] '(lambda() (interactive) (compile (format "cd %s; git status" (vc-root-or-current-dir)))))
 (global-set-key [(super a) ?r ?d ] 'vc-root-diff)
 (global-set-key [(super a) ?p ?x] 'util-pretty-xml)
 (global-set-key [(super a) ?r ?f] 'util-revert-file)
@@ -348,6 +351,7 @@
 (global-set-key [f2] 'tinysearch-search-word-forward)
 (global-set-key [f3] '(lambda () (interactive) (set-mark-command t)))
 (global-set-key [f5] 'run-current-file)
+(global-set-key [f6] 'next-error)
 (global-set-key [f7] 'mdi-maximize-restore-toggle)
 (global-set-key [f8] 'util-kill-this-buffer)
 (global-set-key [home]     'util-goto-beg)
@@ -362,10 +366,10 @@
 
 ;; Lisp specific stuff
 (defun my-emacs-lisp-mode-hook ()
-  (define-key emacs-lisp-mode-map [tab] 'util-indent-lisp-region-or-line)
+  (define-key emacs-lisp-mode-map [tab] 'util-indent-region-or-line)
   )
 (defun my-lisp-mode-hook ()
-  (define-key lisp-mode-map [tab] 'util-indent-lisp-region-or-line)
+  (define-key lisp-mode-map [tab] 'util-indent-region-or-line)
   )
 (add-hook 'emacs-lisp-mode-hook 'my-emacs-lisp-mode-hook)
 (add-hook 'lisp-mode-hook 'my-lisp-mode-hook)
@@ -379,13 +383,14 @@
           '(lambda ()
             (modify-syntax-entry ?\_ "w")
             (define-key
-              js2-mode-map [tab] 'util-indent-javascript-region-or-line)
+              js2-mode-map [tab] 'util-indent-region-or-line)
             (local-set-key [(return)] 'newline-and-indent)))
 
 ;; css mode
 (add-hook 'css-mode-hook
           '(lambda ()
-             (local-set-key [tab] 'util-indent-css-region-or-line)
+             (local-set-key [tab] 'util-indent-region-or-line)
+             (local-set-key [(return)] 'newline-and-indent)
 ))
 
 (defun in-js2-file () (derived-mode-p 'js2-mode))
@@ -399,7 +404,8 @@
         "")))
 
 (defun my-python-mode-hook ()
-  (define-key python-mode-map [tab] 'util-indent-python-region-or-line)
+  (define-key python-mode-map [tab] 'util-indent-region-or-line)
+  (local-set-key [(return)] 'newline-and-indent)
   )
 (add-hook 'python-mode-hook 'my-python-mode-hook)
 
