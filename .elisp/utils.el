@@ -79,6 +79,11 @@
         (if (> (count-windows) 1) (delete-window))
         ))))
 
+;; needs to be more like kill least significant buffers
+(defun util-kill-other-buffers ()
+      "Kill all other buffers."
+      (interactive)
+      (mapc 'kill-buffer (delq (current-buffer) (buffer-list))))
 
 (defun util-shell-function (cmd &optional buffername quiet)
   "Run a function defined in our bash configuration"
@@ -541,7 +546,7 @@ The characters copied are inserted in the buffer before point."
   (let (beg)
     (beginning-of-line 1)
     (if (looking-at "[Ii]ndex:? ") (forward-line))
-    (search-backward-regexp "^[Ii]ndex:? ")
+    (search-backward-regexp "[Ii]ndex:? ")
     (forward-line)
     (setq beg (point))
     (condition-case nil (search-forward-regexp "^[Ii]ndex:? ")
@@ -827,18 +832,19 @@ The characters copied are inserted in the buffer before point."
     (goto-char lastm)
     ))
 
-(defun vc-root ()
+(defun util-vc-root ()
   (interactive)
   (condition-case nil
-      (let ((backend (vc-responsible-backend (buffer-file-name))))
-        (vc-call-backend backend 'root (buffer-file-name)))
-    (error nil))
-   )
+      (let ((backend 'Git))
+	(message "Backend %s" backend)
+        (vc-call-backend backend 'root (file-name-directory (buffer-file-name))))
+    (error nil)))
 
 (defun vc-root-or-current-dir ()
   "Get the vc root or the current directory"
   (interactive)
-  (let ((the-root (vc-root)))
+  (let ((the-root (util-vc-root)))
+    (message (format "root: %s" the-root))
     (if the-root
       the-root
       (file-name-directory (or load-file-name buffer-file-name)))))
@@ -855,7 +861,7 @@ The characters copied are inserted in the buffer before point."
     (message (format "Default directory: %s" default-directory))
     (grep my-findcode-command)))
 
-(setq findcode-command "grep --mmap -Rn %s .")
+(setq findcode-command "grep --mmap -Rin %s .")
 (defun util-findcode (findcode-command)
   "Run findcode on your current repo, or default path, if defined"
   (interactive
@@ -895,3 +901,21 @@ If the current file doesn't exist yet the buffer is saved to create it."
     (save-buffer))
   (set-file-modes (buffer-file-name) (string-to-number mode 8))
   (message (format "File permission set to %s" mode)))
+
+(defun util-custom-compile (cmd compile-name &optional protect)
+  "Run a custom compile command in a custom buffer"
+  (util-save-and-save-some-buffers)
+  (let ((mybuf (current-buffer)))
+    (if (get-buffer compile-name)
+        (kill-buffer compile-name))
+    (compile cmd)
+    (switch-to-buffer "*compilation*")
+    (rename-buffer compile-name)
+    (switch-to-buffer mybuf)
+    ))
+
+(defun remove-dos-eol ()
+  "Do not show ^M in files containing mixed UNIX and DOS line endings."
+  (interactive)
+  (setq buffer-display-table (make-display-table))
+  (aset buffer-display-table ?\^M []))

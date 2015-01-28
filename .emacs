@@ -3,6 +3,7 @@
 ;; Are we running XEmacs or Emacs?
 (defvar running-xemacs (string-match "XEmacs\\|Lucid" emacs-version))
 (add-to-list 'load-path "~/.elisp")
+(setenv "PATH" (concat "/usr/local/bin:" (getenv "PATH")))
 
 (require 'cl)
 (require 'utils)
@@ -101,6 +102,9 @@
 (setq js2-mirror-mode t)
 (require 'web-mode)
 (setq web-mode-comment-style 2)
+(setq standard-indent 2)
+(setq web-mode-indent-style 2)
+(setq-default indent-tabs-mode t)
 
 (setq mac-option-modifier 'super)
 (setq mac-command-modifier 'meta)
@@ -313,6 +317,7 @@
 (global-set-key [(super a) ?f ?d ] 'vc-diff)
 (global-set-key [(super a) ?f ?g ] 'util-findgrep)
 (global-set-key [(super a) ?g ?s ] '(lambda() (interactive) (compile (format "cd %s; git status" (vc-root-or-current-dir)))))
+(global-set-key [(super a) ?k ?o ] 'util-kill-other-buffers)
 (global-set-key [(super a) ?r ?d ] 'vc-root-diff)
 (global-set-key [(super a) ?p ?x] 'util-pretty-xml)
 (global-set-key [(super a) ?r ?f] 'util-revert-file)
@@ -321,6 +326,8 @@
 (global-set-key [(super a) ?u ?b] 'util-update-buffers)
 (global-set-key [(super a) ?w ?a] 'airmacs-agnostic-warn)
 (global-set-key [(super e)] 'eval-region-verbose)
+(global-set-key [(super shift e)] '(lambda()  (interactive)
+                             (eval-region (region-beginning) (region-end)) (deactivate-mark)))
 (global-set-key [(super k)] 'util-kill-whole-line)
 (global-set-key [C-backspace] 'util-backward-kill-word)
 (global-set-key [C-down] '(lambda () (interactive) (next-line 5)))
@@ -364,15 +371,13 @@
 (global-set-key [s-up] '(lambda () (interactive) (copy-from-above-or-below 1)))
 (global-set-key [up] 'previous-line)
 
+(defun common-hook ()
+  (local-set-key [tab] 'util-indent-region-or-line)
+  (local-set-key [(return)] 'newline-and-indent))
+
 ;; Lisp specific stuff
-(defun my-emacs-lisp-mode-hook ()
-  (define-key emacs-lisp-mode-map [tab] 'util-indent-region-or-line)
-  )
-(defun my-lisp-mode-hook ()
-  (define-key lisp-mode-map [tab] 'util-indent-region-or-line)
-  )
-(add-hook 'emacs-lisp-mode-hook 'my-emacs-lisp-mode-hook)
-(add-hook 'lisp-mode-hook 'my-lisp-mode-hook)
+(add-hook 'emacs-lisp-mode-hook 'common-hook)
+(add-hook 'lisp-mode-hook 'common-hook)
 
 ;; javascript mode
 (autoload 'js2-mode "js2" nil t)
@@ -381,17 +386,17 @@
 (setq-default js2-basic-offset 2)
 (add-hook 'js2-mode-hook
           '(lambda ()
-            (modify-syntax-entry ?\_ "w")
-            (define-key
-              js2-mode-map [tab] 'util-indent-region-or-line)
-            (local-set-key [(return)] 'newline-and-indent)))
+             (tern-mode t)
+             (modify-syntax-entry ?\_ "w")
+             (define-key
+               js2-mode-map [tab] 'util-indent-region-or-line)
+             (local-set-key [(return)] 'newline-and-indent)))
 
 ;; css mode
-(add-hook 'css-mode-hook
-          '(lambda ()
-             (local-set-key [tab] 'util-indent-region-or-line)
-             (local-set-key [(return)] 'newline-and-indent)
-))
+(add-hook 'css-mode-hook 'common-hook)
+;; html/web mode
+(add-hook 'html-mode-hook 'common-hook)
+(add-hook 'web-mode-hook 'common-hook)
 
 (defun in-js2-file () (derived-mode-p 'js2-mode))
 
@@ -403,11 +408,7 @@
         (loop for i in str do (forward-char 1))
         "")))
 
-(defun my-python-mode-hook ()
-  (define-key python-mode-map [tab] 'util-indent-region-or-line)
-  (local-set-key [(return)] 'newline-and-indent)
-  )
-(add-hook 'python-mode-hook 'my-python-mode-hook)
+(add-hook 'python-mode-hook 'common-hook)
 
 
 (util-populate-hash
@@ -427,3 +428,5 @@
    ("wcl" (lambda () (insert-if-js2 "window.console.log()")))
    ))
 
+
+(setenv "NODE_PATH" "/usr/local/lib/node_modules/")
