@@ -79,7 +79,21 @@
         (if (> (count-windows) 1) (delete-window))
         ))))
 
-;; needs to be more like kill least significant buffers
+(setq util-special-buffers "")
+(defun util-delete-other-buffers ()
+  "Delete other buffers, but use a regex to prevent special buffers from being deleted."
+  (interactive)
+  (util-save-and-save-some-buffers)
+  (let ((tobe-killed (cdr (buffer-list (current-buffer)))))
+     (while tobe-killed
+       (let ((current (car tobe-killed)))
+         (if (not (string-match util-special-buffers (buffer-name current)))
+             (progn
+               (kill-buffer current)
+               (message (format "kill buffer: %s" current))))
+         (setq tobe-killed (cdr tobe-killed)))))
+  (delete-other-windows))
+
 (defun util-kill-other-buffers ()
       "Kill all other buffers."
       (interactive)
