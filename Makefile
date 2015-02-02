@@ -1,5 +1,5 @@
 
-install: $(HOME)/.emacs $(patsubst .elisp/%,$(HOME)/.elisp/%,$(wildcard .elisp/*)) external
+install: $(HOME)/.emacs $(patsubst .elisp/%,$(HOME)/.elisp/%,$(wildcard .elisp/*)) external pkg-install 
 
 $(HOME)/.emacs: .emacs
 	cp .emacs $(HOME)/.emacs
@@ -10,14 +10,11 @@ $(HOME)/.elisp:
 $(HOME)/.elisp/%: .elisp/% $(HOME)/.elisp
 	-/bin/cp -rf $< $@ 
 
+# check package-install before you add to the external target
+pkg-install:
+	./emacs-pkg-install.sh js2-mode js2-refactor auto-complete tern tern-auto-complete load-dir nlinum python-mode hide-lines web-mode auto-save-buffers-enhanced
+
 external:
 # not github
 	cd ~/.elisp; wget -Nq http://www.cb1.com/~john/computing/emacs/lisp/basics/load-directory.el 
-	cd ~/.elisp; wget -Nq http://www.emacswiki.org/emacs-en/download/setnu.el
-	cd ~/.elisp; wget -Nq http://www.emacswiki.org/emacs-de/download/hide-lines.el
 	cd ~/.elisp; wget -Nq http://www.emacswiki.org/emacs/download/highlight-beyond-fill-column.el
-	cd ~/.elisp; wget -Nq http://www.emacswiki.org/emacs/download/auto-save.el
-#github
-	curl -s --insecure https://raw.githubusercontent.com/fxbois/web-mode/master/web-mode.el -o ~/.elisp/web-mode.el
-	curl -s --insecure https://raw.githubusercontent.com/mooz/js2-mode/master/js2-mode.el -o ~/.elisp/js2-mode.el
-	curl -s --insecure https://raw.githubusercontent.com/emacsmirror/python-mode/master/python-mode.el -o ~/.elisp/python-mode.el

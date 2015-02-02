@@ -3,10 +3,11 @@
 ;; Are we running XEmacs or Emacs?
 (defvar running-xemacs (string-match "XEmacs\\|Lucid" emacs-version))
 (add-to-list 'load-path "~/.elisp")
+(package-initialize)
 (setenv "PATH" (concat "/usr/local/bin:" (getenv "PATH")))
 
 (require 'cl)
-(require 'utils)
+(require 'air-utils)
 
 (setq default-directory "~/")
 
@@ -37,11 +38,9 @@
 ;; Use UTF8
 (set-language-environment "UTF-8")
 
-;; search for word with [f2], make backspace and delete work too
 (define-key isearch-mode-map [delete] 'isearch-delete-char)
 (define-key isearch-mode-map [backspace] 'isearch-delete-char)
 (define-key isearch-mode-map (kbd "C-o") 'isearch-occur)
-(setq tinysearch-:wrap-flag t)
 
 ;; highlight long lines
 (setq default-fill-column 115)
@@ -358,7 +357,6 @@
 (global-set-key [f10] '(lambda () (interactive) (comment-line 'comment-region)))
 (global-set-key [f11] 'other-window)
 (global-set-key [f12] 'font-lock-mode)
-(global-set-key [f2] 'tinysearch-search-word-forward)
 (global-set-key [f3] '(lambda () (interactive) (set-mark-command t)))
 (global-set-key [f5] 'run-current-file)
 (global-set-key [f6] 'next-error)
@@ -387,6 +385,7 @@
 (setq js2-use-font-lock-faces t)
 (setq js2-mirror-mode nil)
 (setq-default js2-basic-offset 2)
+(setq-default js2-highlight-level 3)
 (setq-default indent-tabs-mode nil)
 (make-variable-buffer-local 'tab-width)
 (add-hook 'js2-mode-hook
@@ -415,7 +414,6 @@
 
 (add-hook 'python-mode-hook 'common-hook)
 
-
 (util-populate-hash
  util-tab-completions
  '(("" 'nil)
@@ -435,3 +433,5 @@
 
 
 (setenv "NODE_PATH" "/usr/local/lib/node_modules/")
+
+(message "Done loading airmacs")

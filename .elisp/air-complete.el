@@ -1,7 +1,19 @@
 (provide 'air-complete)
 
 (require 'cl)
-;minibuffer auto-complete
+
+(setq air-dir-completions
+      '(
+        ("usr" "/usr")
+        ("etc" "/etc")
+        ("roo" "/root")
+        ("hom" "~/")
+        ("var" "/var")
+        ("log" "/var/log")
+        )
+      )
+
+;;minibuffer auto-complete
 (defun air-lookup-filename-completion ()
   (let ((completion
          (cadr

@@ -1,4 +1,4 @@
-(provide 'utils)
+(provide 'air-utils)
 
 ;;;;;;;;;;;;;;;;;;
 ; fancy delete-other-windows
@@ -68,8 +68,6 @@
           (filter-list (cdr list) predicate)
       )))
 
-
-
 (defun util-kill-this-buffer ()
   (interactive)
   (if (window-minibuffer-p) (keyboard-escape-quit)
@@ -79,7 +77,9 @@
         (if (> (count-windows) 1) (delete-window))
         ))))
 
+;; Override this with a regex to add your own special buffers.
 (setq util-special-buffers "")
+
 (defun util-delete-other-buffers ()
   "Delete other buffers, but use a regex to prevent special buffers from being deleted."
   (interactive)
