@@ -426,6 +426,18 @@ The characters copied are inserted in the buffer before point."
       (back-to-indentation)
     (beginning-of-line)))
 
+(defun end-of-line-ignore-whitespace ()
+  (interactive)
+  (goto-char (line-end-position-ignore-whitespace)))
+
+(defun line-end-position-ignore-whitespace ()
+  (save-excursion
+    (end-of-line)
+    (while (or (string= (previous-char) " ")
+               (string= (previous-char) "	"))
+      (backward-char 1))
+    (point)))
+
 (defun util-ending-or-nextline-end ()
   (interactive)
   (if (string= (previous-key-string) "C-e") (forward-line 1))

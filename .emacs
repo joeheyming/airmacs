@@ -109,6 +109,7 @@
 (setq mac-command-modifier 'meta)
 (setq kill-whole-line t)
 
+(define-key ctl-x-map "\C-b" 'electric-buffer-list)
 
 ;; Tab completion
 (setq hippie-expand-try-functions-list (list
