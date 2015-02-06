@@ -125,6 +125,8 @@
 (yas/initialize)
 (yas/global-mode 1)
 
+(define-key ctl-x-map "\C-b" 'electric-buffer-list)
+
 ;; Tab completion
 (setq hippie-expand-try-functions-list (list
   'yas-hippie-try-expand
