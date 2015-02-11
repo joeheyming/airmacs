@@ -3,6 +3,8 @@
 ;; Are we running XEmacs or Emacs?
 (defvar running-xemacs (string-match "XEmacs\\|Lucid" emacs-version))
 (add-to-list 'load-path "~/.elisp")
+;; package-initialize may fail under some versions of emacs.
+;; Commenting it out appears to fix that in those cases.
 (package-initialize)
 (setenv "PATH" (concat "/usr/local/bin:" (getenv "PATH")))
 
@@ -109,7 +111,6 @@
 (setq mac-command-modifier 'meta)
 (setq kill-whole-line t)
 
-(define-key ctl-x-map "\C-b" 'electric-buffer-list)
 
 ;; Tab completion
 (setq hippie-expand-try-functions-list (list
@@ -121,6 +122,8 @@
   'try-complete-file-name-partially
   'try-complete-file-name
 ))
+
+(define-key ctl-x-map "\C-b" 'electric-buffer-list)
 
 ;; iswitchb
 ;(ido-mode)

@@ -74,8 +74,16 @@
     (if (string= "*Buffer List*" (buffer-name)) (keyboard-quit)
       (progn
         (kill-buffer (current-buffer))
-        (if (> (count-windows) 1) (delete-window))
+        (if (> (count-windows) (util-count-buffers)) (delete-window))
         ))))
+
+;; Stolen wholesale http://www.cb1.com/~john/ (John Sturdy)
+(defun util-count-buffers (&optional display-anyway)
+  "Display or return the number of buffers."
+  (interactive)
+  (let ((buf-count (length (buffer-list))))
+    (if (or (interactive-p) display-anyway)
+    (message "%d buffers in this Emacs" buf-count)) buf-count))
 
 ;; Override this with a regex to add your own special buffers.
 (setq util-special-buffers "")
@@ -221,15 +229,6 @@ Goes backward if ARG is negative; error if CHAR not found."
         (forward-line 1)
         )
     (comment-dwim nil)))
-
-(defun util-kill-this-buffer ()
-  (interactive)
-  (if (window-minibuffer-p) (keyboard-escape-quit)
-    (if (string= "*Buffer List*" (buffer-name)) (keyboard-quit)
-      (progn
-        (kill-buffer (current-buffer))
-        (if (> (count-windows) 1) (delete-window))
-        ))))
 
 (defun util-kill-line-or-region ()
   "Kill region if active, otherwise kill line"
