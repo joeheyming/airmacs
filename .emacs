@@ -100,6 +100,7 @@
 (blink-cursor-mode -1)
 (setq blink-matching-delay 0.1)
 
+(require 'js2-mode)
 (setq js2-mirror-mode t)
 (require 'web-mode)
 (setq web-mode-comment-style 2)
@@ -418,13 +419,13 @@
 
 (add-hook 'python-mode-hook 'common-hook)
 
+
 (util-populate-hash
  util-tab-completions
  '(("" 'nil)
-   ("/*" ("/**\n *\n */"))
+   ("/*" (lambda () (backward-delete-char 3) (insert-multiline-js-comment)))
    ("**" ("**\n *"))
    ("\n *" ("\n *\n *"))
-
    ("fun" (lambda () (insert-if-js2 "function(){ }")))
    ("try" (lambda () (insert-if-js2 "try { } catch () { }")))
    ("*@p" (lambda () (insert-if-js2 "* @param {} .")))

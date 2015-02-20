@@ -181,6 +181,7 @@
     ))
 
 (defun util-save-and-save-some-buffers ()
+  (interactive)
   (if (buffer-file-name) (save-buffer))
   (save-some-buffers))
 
@@ -944,3 +945,20 @@ If the current file doesn't exist yet the buffer is saved to create it."
   (interactive)
   (setq buffer-display-table (make-display-table))
   (aset buffer-display-table ?\^M []))
+
+(defun indent-then-insert (to-insert)
+  "indent then insert"
+  (indent-according-to-mode) (insert to-insert))
+
+
+(defun insert-then-indent (to-insert)
+  "insert then indent"
+  (insert to-insert) (indent-according-to-mode))
+
+(defun insert-multiline-js-comment ()
+  "/** * */"
+  (interactive)
+  (beginning-of-line)
+  (indent-then-insert "/**\n")
+  (indent-then-insert "*\n")
+  (indent-then-insert "*/"))
