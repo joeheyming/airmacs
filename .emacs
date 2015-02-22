@@ -330,6 +330,7 @@
 (global-set-key [(super a) ?d ?o ] 'util-delete-other-buffers)
 (global-set-key [(super a) ?f ?d ] 'vc-diff)
 (global-set-key [(super a) ?f ?g ] 'util-findgrep)
+(global-set-key [(super a) ?g ?g ] 'helm-git-grep)
 (global-set-key [(super a) ?g ?s ] '(lambda() (interactive) (compile (format "cd %s; git status" (vc-root-or-current-dir)))))
 (global-set-key [(super a) ?k ?o ] 'util-kill-other-buffers)
 (global-set-key [(super a) ?r ?d ] '(lambda() (interactive) (util-save-and-save-some-buffers) (vc-root-diff nil)))

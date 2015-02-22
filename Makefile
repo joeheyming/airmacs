@@ -12,9 +12,9 @@ $(HOME)/.elisp/%: .elisp/% $(HOME)/.elisp
 
 # check package-install before you add to the external target
 pkg-install:
-	./emacs-pkg-install.sh js2-mode js2-refactor auto-complete tern tern-auto-complete load-dir nlinum python-mode hide-lines web-mode auto-save-buffers-enhanced helm helm-git-files
+	./emacs-pkg-install.sh js2-mode js2-refactor auto-complete tern tern-auto-complete load-dir nlinum python-mode hide-lines web-mode auto-save-buffers-enhanced helm helm-git-files helm-git-grep
 
 external:
-# not github
+# non-github links
 	cd ~/.elisp; wget -Nq http://www.cb1.com/~john/computing/emacs/lisp/basics/load-directory.el 
 	cd ~/.elisp; wget -Nq http://www.emacswiki.org/emacs/download/highlight-beyond-fill-column.el
