@@ -293,18 +293,18 @@
 
 ;;
 ;; anything config to locate
-(require 'anything-config)
+(require 'helm-config)
 
 ;;
 ;; find files in git project
-(require 'anything-git-files)
+(require 'helm-git-files)
 
 (defun eval-region-verbose ()
   (interactive) 
   (eval-region (region-beginning) (region-end)) (deactivate-mark) 
   (message "Region Eval'd"))
 
-(global-set-key (kbd "C-c r") 'anything-git-files)
+(global-set-key (kbd "C-c r") 'helm-git-files)
 (global-set-key "\C-a" 'util-beginning-or-toindent)
 (global-set-key "\C-e" 'util-ending-or-nextline-end)
 (global-set-key "\C-k" 'util-kill-line-or-region)

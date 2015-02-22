@@ -12,7 +12,7 @@ $(HOME)/.elisp/%: .elisp/% $(HOME)/.elisp
 
 # check package-install before you add to the external target
 pkg-install:
-	./emacs-pkg-install.sh js2-mode js2-refactor auto-complete tern tern-auto-complete load-dir nlinum python-mode hide-lines web-mode auto-save-buffers-enhanced anything anything-git-files
+	./emacs-pkg-install.sh js2-mode js2-refactor auto-complete tern tern-auto-complete load-dir nlinum python-mode hide-lines web-mode auto-save-buffers-enhanced helm helm-git-files
 
 external:
 # not github
