@@ -124,6 +124,11 @@
   'try-complete-file-name
 ))
 
+(require 'yasnippet)
+;; Use only own snippets, do not use bundled ones
+(setq yas/snippet-dirs '("~/.emacs.d/snippets"))
+(yas/global-mode 1)
+
 (define-key ctl-x-map "\C-b" 'electric-buffer-list)
 
 ;; iswitchb
@@ -298,12 +303,21 @@
 ;;
 ;; find files in git project
 (require 'helm-git-files)
+(require 'expand-region)
+(require 'js2-refactor)
+(require 'multiple-cursors)
 
 (defun eval-region-verbose ()
   (interactive) 
   (eval-region (region-beginning) (region-end)) (deactivate-mark) 
   (message "Region Eval'd"))
 
+
+(global-set-key (kbd "C->") 'mc/mark-next-like-this)
+(global-set-key (kbd "C-<") 'mc/mark-previous-like-this)
+(global-set-key (kbd "C-c C-<") 'mc/mark-all-like-this)
+
+(global-set-key (kbd "C-=") 'er/expand-region)
 (global-set-key (kbd "C-c r") 'helm-git-files)
 (global-set-key "\C-a" 'util-beginning-or-toindent)
 (global-set-key "\C-e" 'util-ending-or-nextline-end)
@@ -346,6 +360,8 @@
 (global-set-key [(super shift e)] '(lambda()  (interactive)
                              (eval-region (region-beginning) (region-end)) (deactivate-mark)))
 (global-set-key [(super k)] 'util-kill-whole-line)
+(global-set-key [(super tab)] 'yas-next-field)
+(global-set-key [C-tab] 'yas-prev-field)
 (global-set-key [C-backspace] 'util-backward-kill-word)
 (global-set-key [C-down] '(lambda () (interactive) (next-line 5)))
 (global-set-key [C-left] 'util-backward-word)
@@ -409,7 +425,30 @@
              (modify-syntax-entry ?\_ "w")
              (define-key
                js2-mode-map [tab] 'util-indent-region-or-line)
-             (local-set-key [(return)] 'newline-and-indent)))
+             (local-set-key [(return)] 'newline-and-indent)
+             (local-set-key [(super a) ?e ?f] 'js2r-extract-function)
+             (local-set-key [(super a) ?e ?v] 'js2r-extract-var)
+             (local-set-key [(super a) ?e ?m] 'js2r-extract-method)
+             (local-set-key [(super a) ?i ?p] 'js2r-introduce-parameter)
+             (local-set-key [(super a) ?l ?p] 'js2r-localize-parameter)
+             (local-set-key [(super a) ?c ?o] 'js2r-contract-object)
+             (local-set-key [(super a) ?x ?a] 'js2r-expand-array)
+             (local-set-key [(super a) ?x ?f] 'js2r-expand-function)
+             (local-set-key [(super a) ?c ?f] 'js2r-contract-function)
+             (local-set-key [(super a) ?c ?o] 'js2r-contract-object)
+             (local-set-key [(super a) ?i ?v] 'js2r-inline-var)
+             (local-set-key [(super a) ?r ?v] 'js2r-rename-var)
+             (local-set-key [(super a) ?v ?t] 'js2r-var-to-this)
+             (local-set-key [(super a) ?a ?o] 'js2r-arguments-to-object)
+             (local-set-key [(super a) ?3 ?i] 'js2r-ternary-to-if)
+             (local-set-key [(super a) ?s ?v] 'js2r-split-var-declaration)
+             (local-set-key [(super a) ?s ?s] 'js2r-split-string)
+             (local-set-key [(super a) ?u ?w] 'js2r-unwrap)
+             (local-set-key [(super a) ?l ?t] 'js2r-log-this)
+             (local-set-key [(super a) ?s ?l] 'js2r-forward-slurp)
+             (local-set-key [(super a) ?b ?a] 'js2r-forward-barf)
+             (local-set-key [(super a) ?k] 'js2r-kill)
+             ))
 
 ;; css mode
 (add-hook 'css-mode-hook 'common-hook)
@@ -450,3 +489,26 @@
 (setenv "NODE_PATH" "/usr/local/lib/node_modules/")
 
 (message "Done loading airmacs")
+
+(defun toggle-var-this ()
+  "Change a variable declaration from var to this, or this to var."
+  (interactive)
+  (js2r--guard)
+  (save-excursion
+      (let* ((node (js2r--name-node-at-point))
+             (parent (js2-node-parent node)))
+        (cond
+         ((js2-function-node-p parent)
+          (cons (js2-name-node-name node)
+                (js2-node-abs-pos (js2-function-node-body parent))))
+
+         ((js2-prop-get-node-p parent)
+          (cons (buffer-substring (js2-node-abs-pos parent) (js2-node-abs-end parent))
+                (js2r--find-suitable-log-position-around parent-stmt)))
+
+         (:else
+          (cons (js2-name-node-name node)
+                (js2r--find-suitable-log-position-around parent-stmt))))
+
+        )
+      ))
