@@ -312,6 +312,11 @@
   (eval-region (region-beginning) (region-end)) (deactivate-mark) 
   (message "Region Eval'd"))
 
+(defun git-grep-word-or-region ()
+  (interactive)
+  (helm-git-grep-1 (util-region-or-word)))
+
+(global-set-key [f4] 'git-grep-word-or-region)
 
 (global-set-key (kbd "C->") 'mc/mark-next-like-this)
 (global-set-key (kbd "C-<") 'mc/mark-previous-like-this)

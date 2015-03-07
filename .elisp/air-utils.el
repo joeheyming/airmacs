@@ -962,3 +962,10 @@ If the current file doesn't exist yet the buffer is saved to create it."
   (indent-then-insert "/**\n")
   (indent-then-insert "*\n")
   (indent-then-insert "*/"))
+
+(defun util-region-or-word ()
+  "Current word or region"
+  (if (not mark-active)
+      (current-word)
+    (buffer-substring (region-beginning) (region-end))
+    ))
