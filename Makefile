@@ -1,8 +1,6 @@
 
-install: $(HOME)/.emacs $(patsubst .elisp/%,$(HOME)/.elisp/%,$(wildcard .elisp/*)) external pkg-install 
-
-$(HOME)/.emacs: .emacs
-	cp .emacs $(HOME)/.emacs
+install: $(patsubst .elisp/%,$(HOME)/.elisp/%,$(wildcard .elisp/*)) external pkg-install 
+	/bin/cp -i .emacs $(HOME)/.emacs
 
 $(HOME)/.elisp:
 	-mkdir $(HOME)/.elisp
@@ -12,7 +10,7 @@ $(HOME)/.elisp/%: .elisp/% $(HOME)/.elisp
 
 # check package-install before you add to the external target
 pkg-install:
-	./emacs-pkg-install.sh js2-mode js2-refactor auto-complete tern tern-auto-complete load-dir nlinum python-mode hide-lines web-mode auto-save-buffers-enhanced helm helm-git-files helm-git-grep js2-refactor multiple-cursors
+	./emacs-pkg-install.sh js2-mode js2-refactor auto-complete tern tern-auto-complete load-dir nlinum python-mode hide-lines web-mode auto-save-buffers-enhanced helm helm-git-files helm-git-grep js2-refactor multiple-cursors requirejs-mode
 
 external:
 # non-github links
