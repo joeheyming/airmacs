@@ -126,6 +126,23 @@
         standard-output
       (util-shell-function cmd "stdout" 't))))
 
+(defun eval-fun()
+  "Looks for the above defun, then evaluates the function"
+  (interactive)
+  (save-excursion
+    (search-backward-regexp "^\(defun")
+    (let ((line (current-line)))
+      (string-match "defun \\([^(]+\\)" line)
+      (message (format "evaling function: '%s'" (match-string 1 line))))
+    
+    (set-mark (point))
+    (util-goto-matching-char)
+    (forward-char)
+    (eval-region (region-beginning) (region-end))
+    (deactivate-mark)
+    ))
+  
+
 (defun util-select-empty-output-buffer (buffername)
   (switch-to-buffer (get-buffer-create buffername))
   (util-erase-buffer))

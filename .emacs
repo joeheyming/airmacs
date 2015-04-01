@@ -87,6 +87,7 @@
 ; Show line and column numbers in modeline
 (line-number-mode t)
 (column-number-mode t)
+(global-linum-mode t)
 
 ;; Enable wheelmouse support by default
 (cond (window-system (mwheel-install)))
@@ -357,13 +358,14 @@
 (global-set-key [(super a) ?r ?f] 'util-revert-file)
 (global-set-key [(super a) ?r ?h] 'util-revert-hunk)
 (global-set-key [(super a) ?s ?a ] 'vc-annotate)
-(global-set-key [(super a) ?s ?w ] 'split-window-horizontally)
+(global-set-key [(super a) ?s ?w ] '(lambda() (interactive) (split-window-horizontally) (other-window 1)))
 (global-set-key [(super a) ?u ?b] 'util-update-buffers)
 (global-set-key [(super a) ?u ?t] 'untabify)
 (global-set-key [(super a) ?w ?a] 'airmacs-agnostic-warn)
 (global-set-key [(super e)] 'eval-region-verbose)
 (global-set-key [(super shift e)] '(lambda()  (interactive)
                              (eval-region (region-beginning) (region-end)) (deactivate-mark)))
+(global-set-key [(super f)] 'eval-fun)
 (global-set-key [(super k)] 'util-kill-whole-line)
 (global-set-key [(super tab)] 'yas-next-field)
 (global-set-key [C-tab] 'yas-prev-field)
