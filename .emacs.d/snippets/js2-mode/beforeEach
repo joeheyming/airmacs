@@ -1,0 +1,7 @@
+# -*- mode: js2-mode -*-
+# name: beforeEach
+# key: bef
+# --
+beforeEach(function() {
+  $0
+});

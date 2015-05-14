@@ -1,0 +1,7 @@
+# -*- mode: snippet-mode -*-
+# name: tko
+# key: tko
+# condition: (looking-back "^\s*tko")
+# expand-env: ((yas-indent-line 'fixed))
+# --
+this.${name} = ko.observable($0);

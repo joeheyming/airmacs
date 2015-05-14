@@ -1,0 +1,7 @@
+# -*- mode: snippet-mode -*-
+# name: des
+# key: des
+# --
+describe('The ${name} module', function() {
+$0
+});

@@ -1,0 +1,7 @@
+# -*- mode: snippet-mode -*-
+# name: pko
+# key: pko
+# --
+this.${name} = ko.pureComputed(function() {
+$0
+}, this);

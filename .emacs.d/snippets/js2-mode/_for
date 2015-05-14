@@ -1,0 +1,7 @@
+# -*- mode: snippet -*-
+# name: forEach
+# key: _for
+# --
+_.forEach(${arr}, function(${element}) {
+$0
+}${this: ,this});

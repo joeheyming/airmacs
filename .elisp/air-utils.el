@@ -522,18 +522,23 @@ The characters copied are inserted in the buffer before point."
           (progn
             (forward-char 1)
             (search-forward-regexp regexp)
-            (backward-char 1)))
+            (backward-char 1)
+            ))
         (if (not (equal (face-at-point) myface)) 'nil
           (if (string= (current-char) matchchar)
               (setq count (1- count))
-            (if (= count 0) (progn (setq pos (point)))
-              (setq count (1+ count))))))
+            (if (= count 0) (setq pos (point))
+              (setq count (1+ count))))
+          (if (string= matchchar closechar)
+              (setq pos (point))
+            )
+          ))
       pos
       )))
 
-(defun util-find-matching-position ()
+(defun util-find-matching-position (&optional opt-backward)
   (save-excursion
-    (let ((matchchar (current-char)) closechar backward pos)
+    (let ((matchchar (current-char)) closechar (backward opt-backward) pos)
       (when (string= matchchar "(") (setq closechar ")"))
       (when (string= matchchar ")") (setq closechar "(") (setq backward 't))
       (when (string= matchchar "[") (setq closechar "]"))
@@ -542,14 +547,17 @@ The characters copied are inserted in the buffer before point."
       (when (string= matchchar "}") (setq closechar "{") (setq backward 't))
       (when (string= matchchar "<") (setq closechar ">"))
       (when (string= matchchar ">") (setq closechar "<") (setq backward 't))
-      (if (not closechar) (error "Not on a blinkable char, try one of '(){}[]<>'"))
+      (when (string= matchchar "/") (setq closechar "/"))
+      (when (string= matchchar "\"") (setq closechar "\""))
+      (when (string= matchchar "\'") (setq closechar "\'"))
+      (if (not closechar) (error "Not on a blinkable char, try one of '(){}[]<>/\'\"'"))
       (condition-case nil
           (util-matching-char-position matchchar closechar backward)
         (error (error "Couldn't find matching '%s'." closechar))))))
 
-(defun util-goto-matching-char ()
+(defun util-goto-matching-char (&optional opt-backward)
   (interactive)
-  (let ((pos (util-find-matching-position)))
+  (let ((pos (util-find-matching-position opt-backward)))
     (goto-char pos)))
 
 (defun util-blink-matching-char ()
@@ -986,3 +994,23 @@ If the current file doesn't exist yet the buffer is saved to create it."
       (current-word)
     (buffer-substring (region-beginning) (region-end))
     ))
+
+(defun delete-this-buffer-and-file ()
+  "Removes file connected to current buffer and kills buffer."
+  (interactive)
+  (let ((filename (buffer-file-name))
+        (buffer (current-buffer))
+        (name (buffer-name)))
+    (if (not (and filename (file-exists-p filename)))
+        (error "Buffer '%s' is not visiting a file!" name)
+      (when (yes-or-no-p "Are you sure you want to remove this file? ")
+        (delete-file filename)
+        (kill-buffer buffer)
+        (message "File '%s' successfully removed" filename)))))
+
+(defun sort-lines-nocase ()
+  "Sorts case insensitive"
+  (interactive)
+  (let ((sort-fold-case t))
+    (call-interactively 'sort-lines)))
+

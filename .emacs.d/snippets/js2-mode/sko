@@ -1,0 +1,7 @@
+# -*- mode: snippet-mode -*-
+# name: pko
+# key: pko
+# --
+this.${name}.subscribe(function(v${val}) {
+$0
+}, this);

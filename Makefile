@@ -1,11 +1,17 @@
 
-install: $(patsubst .elisp/%,$(HOME)/.elisp/%,$(wildcard .elisp/*)) external pkg-install 
+install: $(patsubst .elisp/%,$(HOME)/.elisp/%,$(wildcard .elisp/*)) $(patsubst .emacs.d/snippets/%,$(HOME)/.emacs.d/snippets/%,$(wildcard .emacs.d/snippets/*)) external pkg-install 
 	/bin/cp -i .emacs $(HOME)/.emacs
 
 $(HOME)/.elisp:
 	-mkdir $(HOME)/.elisp
 
 $(HOME)/.elisp/%: .elisp/% $(HOME)/.elisp
+	-/bin/cp -rf $< $@ 
+
+$(HOME)/.emacs.d/snippets/:
+	-mkdir -p $(HOME)/.emacs.d/snippets/
+
+$(HOME)/.emacs.d/snippets/%: .emacs.d/snippets/% $(HOME)/.emacs.d/snippets/
 	-/bin/cp -rf $< $@ 
 
 # check package-install before you add to the external target

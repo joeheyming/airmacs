@@ -85,9 +85,7 @@
 
 
 ; Show line and column numbers in modeline
-(line-number-mode t)
 (column-number-mode t)
-(global-linum-mode t)
 
 ;; Enable wheelmouse support by default
 (cond (window-system (mwheel-install)))
@@ -113,10 +111,22 @@
 (setq mac-command-modifier 'meta)
 (setq kill-whole-line t)
 
+(require 'yasnippet)
+(add-hook 'prog-mode-hook
+          '(lambda ()
+             (yas-minor-mode)))
+
+;; Use only own snippets, do not use bundled ones
+(setq yas/snippet-dirs '("~/.emacs.d/snippets"))
+(yas/global-mode 1)
+(yas/initialize)
+(yas/load-directory "~/.emacs.d/snippets/js-mode")
+(yas/load-directory "~/.emacs.d/snippets/js2-mode")
 
 ;; Tab completion
 (setq hippie-expand-try-functions-list (list
   'util-try-expand-hashitems
+  'yas-hippie-try-expand
   'try-expand-dabbrev-visible
   'try-expand-dabbrev
   'try-expand-dabbrev-all-buffers
@@ -124,11 +134,6 @@
   'try-complete-file-name-partially
   'try-complete-file-name
 ))
-
-(require 'yasnippet)
-;; Use only own snippets, do not use bundled ones
-(setq yas/snippet-dirs '("~/.emacs.d/snippets"))
-(yas/global-mode 1)
 
 (define-key ctl-x-map "\C-b" 'electric-buffer-list)
 
@@ -317,6 +322,19 @@
   (interactive)
   (helm-git-grep-1 (util-region-or-word)))
 
+(defun split-window-4()
+ "Splite window into 4 sub-window"
+ (interactive)
+ (if (= 1 (length (window-list)))
+     (progn (split-window-vertically)
+	    (split-window-horizontally)
+	    (other-window 2)
+	    (split-window-horizontally)
+	    )
+   )
+)
+
+
 (global-set-key [f4] 'git-grep-word-or-region)
 
 (global-set-key (kbd "C->") 'mc/mark-next-like-this)
@@ -325,6 +343,7 @@
 
 (global-set-key (kbd "C-=") 'er/expand-region)
 (global-set-key (kbd "C-c r") 'helm-git-files)
+(global-set-key (kbd "C-x 4") 'split-window-4)
 (global-set-key "\C-a" 'util-beginning-or-toindent)
 (global-set-key "\C-e" 'util-ending-or-nextline-end)
 (global-set-key "\C-k" 'util-kill-line-or-region)
@@ -347,12 +366,15 @@
 (global-set-key [(super a) ?a ?i] 'util-apply-file)
 (global-set-key [(super a) ?c ?m ] 'chmod)
 (global-set-key [(super a) ?c ?r ] 'vc-resolve-conflicts)
+(global-set-key [(super a) ?d ?f ] 'delete-this-buffer-and-file)
 (global-set-key [(super a) ?d ?o ] 'util-delete-other-buffers)
 (global-set-key [(super a) ?f ?d ] 'vc-diff)
 (global-set-key [(super a) ?f ?g ] 'util-findgrep)
 (global-set-key [(super a) ?g ?g ] 'helm-git-grep)
 (global-set-key [(super a) ?g ?s ] '(lambda() (interactive) (compile (format "cd %s; git status" (vc-root-or-current-dir)))))
 (global-set-key [(super a) ?k ?o ] 'util-kill-other-buffers)
+(global-set-key [(super a) ?g ?s ] 'magit-status)
+(global-set-key [(super a) ?m ?s ] 'magit-diff-staged)
 (global-set-key [(super a) ?r ?d ] '(lambda() (interactive) (util-save-and-save-some-buffers) (vc-root-diff nil)))
 (global-set-key [(super a) ?p ?x] 'util-pretty-xml)
 (global-set-key [(super a) ?r ?f] 'util-revert-file)
@@ -389,7 +411,7 @@
 (global-set-key [M-s-left] 'util-scootch-left)
 (global-set-key [M-s-right] 'util-scootch-right)
 (global-set-key [M-s-up] 'util-scootch-up)
-(global-set-key [M-up] 'util-goto-matching-char)
+(global-set-key [M-up] '(lambda () (interactive) (util-goto-matching-char t)))
 (global-set-key [down] 'next-line)
 (global-set-key [end]      'util-goto-end)
 (global-set-key [f10] '(lambda () (interactive) (comment-line 'comment-region)))
@@ -519,3 +541,11 @@
 
         )
       ))
+
+;; make sure compilation buffers show colorz!
+(require 'ansi-color)
+(defun colorize-compilation-buffer ()
+  (toggle-read-only)
+  (ansi-color-apply-on-region (point-min) (point-max))
+  (toggle-read-only))
+(add-hook 'compilation-filter-hook 'colorize-compilation-buffer)
