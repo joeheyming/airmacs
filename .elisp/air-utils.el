@@ -953,15 +953,15 @@ If the current file doesn't exist yet the buffer is saved to create it."
   (set-file-modes (buffer-file-name) (string-to-number mode 8))
   (message (format "File permission set to %s" mode)))
 
-(defun util-custom-compile (cmd compile-name &optional protect)
+(defun util-custom-compile (cmd custom-compile-name &optional protect)
   "Run a custom compile command in a custom buffer"
   (util-save-and-save-some-buffers)
   (let ((mybuf (current-buffer)))
-    (if (get-buffer compile-name)
-        (kill-buffer compile-name))
+    (if (get-buffer custom-compile-name)
+        (kill-buffer custom-compile-name))
     (compile cmd)
     (switch-to-buffer "*compilation*")
-    (rename-buffer compile-name)
+    (rename-buffer custom-compile-name)
     (switch-to-buffer mybuf)
     ))
 
@@ -1014,3 +1014,73 @@ If the current file doesn't exist yet the buffer is saved to create it."
   (let ((sort-fold-case t))
     (call-interactively 'sort-lines)))
 
+(defun zap-backward-whitespace ()
+  "Deletes any whitespace to the left of the cursor"
+  (interactive)
+  (backward-char 1)
+  (let ((delete-count 0))
+    (while (looking-at " \\|\n")
+      (progn
+        (delete-forward-char 1)
+        (backward-char 1)
+        (setq delete-count (+ 1 delete-count))))
+    delete-count))
+
+(defun collapse-list ()
+  "Take a comma separated list and remove all special newlines/whitespace/tabs around commas"
+  (interactive)
+  (save-excursion
+    (er/mark-outside-pairs)
+    (set-mark-command t)
+    (backward-char)
+    (save-excursion
+      (if (looking-at "\\]\\|)") ;; if i'm looking at a list
+          (let ((end-point (point))
+                (end-char (current-char)))
+            (er/mark-outside-pairs)
+            (deactivate-mark)
+            (forward-char)
+            (setq end-point (- end-point (zap-forward-whitespace)))
+            (while (<= (point) end-point)
+              (progn
+                (search-forward-regexp ",")
+                (setq end-point (+ (- end-point (zap-forward-whitespace)) 1))
+                (insert " "))))))
+    (zap-backward-whitespace)))
+
+(defun go-to-80-spot ()
+  "Goes to the 80 spot of a line, or the end of the line"
+  (interactive)
+  (beginning-of-line)
+  (let ((startpoint (point)) (endpoint) (difference))
+    (end-of-line)
+    (setq endpoint (point))
+    (setq difference (- (- endpoint startpoint) 80))
+    (if (> difference 0)
+        (backward-char difference)
+      )))
+
+(defun eightyify-list ()
+  "Convert a comma separated list into lines not much longer than 80 characters"
+  (interactive)
+  (save-excursion
+    (collapse-list)
+    (er/mark-outside-pairs)
+    (set-mark-command t)
+    (backward-char)
+    (if (looking-at "\\]\\|)") ;; if i'm looking at a list
+        (let ((end-point (point)))
+          (er/mark-outside-pairs)
+          (deactivate-mark)
+          (forward-char)
+          (insert-then-indent "\n")
+          (go-to-80-spot)
+          (while (<= (point) end-point)
+            (progn
+              (search-forward-regexp ",")
+              (forward-char)
+              (insert-then-indent "\n")
+              (go-to-80-spot)))
+          (search-forward-regexp "\\]\\|)")
+          (backward-char)
+          (insert-then-indent "\n")))))
