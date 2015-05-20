@@ -520,31 +520,6 @@
 
 (setenv "NODE_PATH" "/usr/local/lib/node_modules/")
 
-(message "Done loading airmacs")
-
-(defun toggle-var-this ()
-  "Change a variable declaration from var to this, or this to var."
-  (interactive)
-  (js2r--guard)
-  (save-excursion
-      (let* ((node (js2r--name-node-at-point))
-             (parent (js2-node-parent node)))
-        (cond
-         ((js2-function-node-p parent)
-          (cons (js2-name-node-name node)
-                (js2-node-abs-pos (js2-function-node-body parent))))
-
-         ((js2-prop-get-node-p parent)
-          (cons (buffer-substring (js2-node-abs-pos parent) (js2-node-abs-end parent))
-                (js2r--find-suitable-log-position-around parent-stmt)))
-
-         (:else
-          (cons (js2-name-node-name node)
-                (js2r--find-suitable-log-position-around parent-stmt))))
-
-        )
-      ))
-
 ;; make sure compilation buffers show colorz!
 (require 'ansi-color)
 (defun colorize-compilation-buffer ()
@@ -552,3 +527,6 @@
   (ansi-color-apply-on-region (point-min) (point-max))
   (toggle-read-only))
 (add-hook 'compilation-filter-hook 'colorize-compilation-buffer)
+
+
+(message "Done loading airmacs")
