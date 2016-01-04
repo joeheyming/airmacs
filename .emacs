@@ -160,7 +160,6 @@
 (add-to-list 'auto-mode-alist '("Makefile" . makefile-mode))
 (add-to-list 'auto-mode-alist '("\\.\\(html\\|mustache\\)" . html-mode))
 (add-to-list 'auto-mode-alist '("\\.js" . js2-mode))
-(add-to-list 'auto-mode-alist '("\\.json" . js2-mode))
 (add-to-list 'auto-mode-alist '("\\.scss" . scss-mode))
 (add-to-list 'auto-mode-alist '("\\.less" . css-mode))
 (add-to-list 'auto-mode-alist '("bashrc" . sh-mode))
@@ -308,7 +307,7 @@
 
 ;;
 ;; find files in git project
-(require 'helm-git-files)
+(require 'helm-ls-git)
 (require 'expand-region)
 (require 'js2-refactor)
 (require 'multiple-cursors)
@@ -342,7 +341,7 @@
 (global-set-key (kbd "C-c C-<") 'mc/mark-all-like-this)
 
 (global-set-key (kbd "C-=") 'er/expand-region)
-(global-set-key (kbd "C-c r") 'helm-git-files)
+(global-set-key (kbd "C-c r") 'helm-ls-git-ls)
 (global-set-key (kbd "C-x 4") 'split-window-4)
 (global-set-key "\C-a" 'util-beginning-or-toindent)
 (global-set-key "\C-e" 'util-ending-or-nextline-end)
