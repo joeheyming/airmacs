@@ -101,6 +101,7 @@
 
 (require 'js2-mode)
 (setq js2-mirror-mode t)
+
 (require 'web-mode)
 (setq web-mode-comment-style 2)
 (setq standard-indent 2)
@@ -116,17 +117,13 @@
           '(lambda ()
              (yas-minor-mode)))
 
-;; Use only own snippets, do not use bundled ones
-(setq yas/snippet-dirs '("~/.emacs.d/snippets"))
 (yas/global-mode 1)
 (yas/initialize)
-(yas/load-directory "~/.emacs.d/snippets/js-mode")
-(yas/load-directory "~/.emacs.d/snippets/js2-mode")
 
 ;; Tab completion
 (setq hippie-expand-try-functions-list (list
-  'util-try-expand-hashitems
   'yas-hippie-try-expand
+  'util-try-expand-hashitems
   'try-expand-dabbrev-visible
   'try-expand-dabbrev
   'try-expand-dabbrev-all-buffers
@@ -158,7 +155,7 @@
 
 (add-to-list 'auto-mode-alist '("\\.log\\'" . auto-revert-mode))
 (add-to-list 'auto-mode-alist '("Makefile" . makefile-mode))
-(add-to-list 'auto-mode-alist '("\\.\\(html\\|mustache\\)" . html-mode))
+(add-to-list 'auto-mode-alist '("\\.\\(html\\|mustache\\)" . web-mode))
 (add-to-list 'auto-mode-alist '("\\.js" . js2-mode))
 (add-to-list 'auto-mode-alist '("\\.scss" . scss-mode))
 (add-to-list 'auto-mode-alist '("\\.less" . css-mode))
@@ -167,6 +164,8 @@
              '("\\.\\(?:gemspec\\|irbrc\\|gemrc\\|rake\\|rb\\|ru\\|thor\\)\\'" . ruby-mode))
 (add-to-list 'auto-mode-alist
              '("\\(Capfile\\|Gemfile\\(?:\\.[a-zA-Z0-9._-]+\\)?\\|[rR]akefile\\)\\'" . ruby-mode))
+(add-to-list 'auto-mode-alist '("\\.org" . org-mode))
+(add-to-list 'auto-mode-alist '("\\.md" . markdown-mode))
 
 
 ; don't iconify on C-z when running in X
@@ -219,6 +218,8 @@
 
 (require 'compile)
 (setq compilation-scroll-output t)
+(add-hook 'compilation-filter-hook 'comint-truncate-buffer)
+(setq comint-buffer-maximum-size 2000)
 (setq compilation-search-path
       (list "~" nil))
 
@@ -262,21 +263,22 @@
 
 (require 'diff-mode)
 (custom-set-faces
-  ;; custom-set-faces was added by Custom -- don't edit or cut/paste it!
-  ;; Your init file should contain only one such instance.
- ;'(default ((t (:stipple nil :background "black" :foreground "white" :inverse-video nil :box nil :strike-through nil :overline nil :underline nil :slant normal :weight normal :width normal :family "default"))))
-  '(font-lock-comment-face ((t (:foreground "chocolate1"))))
-  '(compilation-info ((((class color) (min-colors 88) (background dark)) (:foreground "lightpink" :weight bold :underline nil))))
-  '(cperl-array-face ((t (:foreground "gold"))))
-  '(cperl-hash-face ((t (:foreground "firebrick1"))))
-  '(diff-added-face ((t (:foreground "dark turquoise"))))
-  '(diff-removed-face ((t (:foreground "violet"))))
-  '(diff-refine-change ((t (:background "gray30"))))
-  '(diff-file-header-face ((t (:foreground "firebrick" :weight bold))))
-  '(diff-header-face ((((class color) (background dark)) (:foreground "forest green"))))
-  '(diff-index-face ((t (:inherit diff-file-header-face :underline t))))
-  '(diff-function-face ((t (:inherit diff-context-face :foreground "DarkGoldenrod1"))))
-  '(trailing-whitespace ((((class color) (background dark)) (:background "grey30")))))
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(compilation-info ((((class color) (min-colors 88) (background dark)) (:foreground "lightpink" :weight bold :underline nil))))
+ '(cperl-array-face ((t (:foreground "gold"))))
+ '(cperl-hash-face ((t (:foreground "firebrick1"))))
+ '(diff-added ((t (:foreground "dark turquoise"))))
+ '(diff-file-header ((t (:foreground "firebrick" :weight bold))))
+ '(diff-function ((t (:inherit diff-context-face :foreground "DarkGoldenrod1"))))
+ '(diff-header ((((class color) (background dark)) (:foreground "forest green"))))
+ '(diff-index ((t (:inherit diff-file-header-face :underline t))))
+ '(diff-refine-change ((t (:background "gray30"))))
+ '(diff-removed ((t (:foreground "violet"))))
+ '(font-lock-comment-face ((t (:foreground "chocolate1"))))
+ '(trailing-whitespace ((((class color) (background dark)) (:background "grey30")))))
 
 
 ;; setdefault window size
@@ -322,26 +324,24 @@
   (helm-git-grep-1 (util-region-or-word)))
 
 (defun split-window-4()
- "Splite window into 4 sub-window"
+ "Split window into 4 sub-window"
  (interactive)
  (if (= 1 (length (window-list)))
      (progn (split-window-vertically)
 	    (split-window-horizontally)
 	    (other-window 2)
 	    (split-window-horizontally)
-	    )
-   )
-)
+	    )))
 
-
-(global-set-key [f4] 'git-grep-word-or-region)
+(global-set-key [f4] 'helm-git-grep-at-point)
+(global-set-key [(shift f4)] 'helm-imenu)
 
 (global-set-key (kbd "C->") 'mc/mark-next-like-this)
 (global-set-key (kbd "C-<") 'mc/mark-previous-like-this)
 (global-set-key (kbd "C-c C-<") 'mc/mark-all-like-this)
 
 (global-set-key (kbd "C-=") 'er/expand-region)
-(global-set-key (kbd "C-c r") 'helm-ls-git-ls)
+(global-set-key (kbd "C-c C-l") 'helm-ls-git-ls)
 (global-set-key (kbd "C-x 4") 'split-window-4)
 (global-set-key "\C-a" 'util-beginning-or-toindent)
 (global-set-key "\C-e" 'util-ending-or-nextline-end)
@@ -382,7 +382,7 @@
 (global-set-key [(super a) ?r ?h] 'util-revert-hunk)
 (global-set-key [(super a) ?s ?a ] 'vc-annotate)
 (global-set-key [(super a) ?s ?w ] '(lambda() (interactive) (split-window-horizontally) (other-window 1)))
-(global-set-key [(super a) ?t ?q ] 'toggle-quotes)
+(global-set-key [(super a) ?t ?q ] 'util-toggle-quotes)
 (global-set-key [(super a) ?u ?b] 'util-update-buffers)
 (global-set-key [(super a) ?u ?t] 'untabify)
 (global-set-key [(super a) ?w ?a] 'airmacs-agnostic-warn)
@@ -436,7 +436,8 @@
 
 (defun common-hook ()
   (local-set-key [tab] 'util-indent-region-or-line)
-  (local-set-key [(return)] 'newline-and-indent))
+  (local-set-key [(return)] 'newline-and-indent)
+  (yas-minor-mode))
 
 ;; Lisp specific stuff
 (add-hook 'emacs-lisp-mode-hook 'common-hook)
@@ -450,9 +451,15 @@
 (setq-default js2-highlight-level 3)
 (setq-default indent-tabs-mode nil)
 (make-variable-buffer-local 'tab-width)
+(setq-default js2-show-parse-errors nil)
+(setq-default js2-strict-missing-semi-warning nil)
+(setq-default js2-strict-trailing-comma-warning t)
+(setq-default js2-global-externs '("setTimeout" "clearTimeout" "setInterval" "clearInterval" "console" "JSON" "define" "describe" "beforeEach" "afterEach" "it" "xit" "spyOn" "expect" "jasmine" "runs" "waits" "waitsFor" "xdescribe" "require" "localStorage" "sessionStorage" "Image" "exports" "module"))
+
 (add-hook 'js2-mode-hook
           '(lambda ()
              (tern-mode t)
+             (js2-imenu-extras-mode)
              (modify-syntax-entry ?\_ "w")
              (define-key
                js2-mode-map [tab] 'util-indent-region-or-line)
@@ -481,6 +488,14 @@
              (local-set-key [(super a) ?k] 'js2r-kill)
              ))
 
+(add-hook 'java-mode-hook
+          '(lambda ()
+            (progn
+              (message "java-mode")
+              (setq c-basic-offset 2
+                    tab-width 2
+                    indent-tabs-mode t))))
+
 ;; css mode
 (add-hook 'css-mode-hook 'common-hook)
 ;; html/web mode
@@ -499,24 +514,6 @@
 
 (add-hook 'python-mode-hook 'common-hook)
 
-
-(util-populate-hash
- util-tab-completions
- '(("" 'nil)
-   ("/*" (lambda () (backward-delete-char 3) (insert-multiline-js-comment)))
-   ("**" ("**\n *"))
-   ("\n *" ("\n *\n *"))
-   ("fun" (lambda () (insert-if-js2 "function(){ }")))
-   ("try" (lambda () (insert-if-js2 "try { } catch () { }")))
-   ("*@p" (lambda () (insert-if-js2 "* @param {} .")))
-   ("*@r" (lambda () (insert-if-js2 "* @return {} .")))
-   ("*@t" (lambda () (insert-if-js2 "/** @type {} */")))
-   ("*@c" (lambda () (insert-if-js2 "/** @const */")))
-   ("con" (lambda () (insert-if-js2 "console.log()")))
-   ("wcl" (lambda () (insert-if-js2 "window.console.log()")))
-   ))
-
-
 (setenv "NODE_PATH" "/usr/local/lib/node_modules/")
 
 ;; make sure compilation buffers show colorz!
@@ -527,5 +524,21 @@
   (toggle-read-only))
 (add-hook 'compilation-filter-hook 'colorize-compilation-buffer)
 
+(add-hook 'term-mode-hook (lambda()
+                (yas-minor-mode -1)))
+(add-hook 'prog-mode-hook 'yas-minor-mode)
+(add-hook 'ess-mode-hook 'yas-minor-mode)
+(add-hook 'markdown-mode-hook 'yas-minor-mode)  
+
+(custom-set-variables
+ ;; custom-set-variables was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(web-mode-attr-indent-offset 2)
+ '(web-mode-code-indent-offset 2)
+ '(web-mode-css-indent-offset 2)
+ '(web-mode-markup-indent-offset 2)
+ '(web-mode-sql-indent-offset 2))
 
 (message "Done loading airmacs")
