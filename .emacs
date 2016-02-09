@@ -96,6 +96,11 @@
 (setq mouse-highlight nil)
 
 (setq-default visible-bell t)
+(setq ring-bell-function
+      (lambda ()
+        (invert-face 'mode-line)
+        (run-with-timer 0.1 nil 'invert-face 'mode-line)))
+
 (blink-cursor-mode -1)
 (setq blink-matching-delay 0.1)
 
@@ -540,11 +545,5 @@
  '(web-mode-css-indent-offset 2)
  '(web-mode-markup-indent-offset 2)
  '(web-mode-sql-indent-offset 2))
-
-(setq visible-bell nil)
-(setq ring-bell-function
-      (lambda ()
-        (invert-face 'mode-line)
-        (run-with-timer 0.1 nil 'invert-face 'mode-line)))
 
 (message "Done loading airmacs")
