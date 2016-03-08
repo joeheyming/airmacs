@@ -546,4 +546,7 @@
  '(web-mode-markup-indent-offset 2)
  '(web-mode-sql-indent-offset 2))
 
+(add-hook 'conf-javaprop-mode-hook 
+          '(lambda () (conf-quote-normal nil)))
+
 (message "Done loading airmacs")
