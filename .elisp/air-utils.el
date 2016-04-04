@@ -626,6 +626,12 @@ The characters copied are inserted in the buffer before point."
       (set-buffer-modified-p 't)
       (save-buffer))))
 
+(defun chomp (str)
+      "Chomp leading and tailing whitespace from STR."
+      (while (string-match "\\`\n+\\|^\\s-+\\|\\s-+$\\|\n+\\'"
+                           str)
+        (setq str (replace-match "" t t str)))
+      str)
 
 (defun util-update-buffers ()
   "Refreshs all open buffers from their respective files"
