@@ -171,6 +171,7 @@
              '("\\(Capfile\\|Gemfile\\(?:\\.[a-zA-Z0-9._-]+\\)?\\|[rR]akefile\\)\\'" . ruby-mode))
 (add-to-list 'auto-mode-alist '("\\.org" . org-mode))
 (add-to-list 'auto-mode-alist '("\\.md" . markdown-mode))
+(add-to-list 'auto-mode-alist '("\\.json" . json-mode))
 (add-to-list 'auto-mode-alist '("\\.properties" . conf-javaprop-mode))
 
 ; don't iconify on C-z when running in X
