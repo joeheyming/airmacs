@@ -440,6 +440,11 @@
 (global-set-key [s-up] '(lambda () (interactive) (copy-from-above-or-below 1)))
 (global-set-key [up] 'previous-line)
 
+(global-set-key [s-kp-4] 'windmove-left) 
+(global-set-key [s-kp-6] 'windmove-right) 
+(global-set-key [s-kp-8] 'windmove-up) 
+(global-set-key [s-kp-2] 'windmove-down)
+
 (defun common-hook ()
   (local-set-key [tab] 'util-indent-region-or-line)
   (local-set-key [(return)] 'newline-and-indent)
