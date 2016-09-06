@@ -163,7 +163,7 @@
 (add-to-list 'auto-mode-alist '("\\.\\(html\\|mustache\\)" . web-mode))
 (add-to-list 'auto-mode-alist '("\\.js" . js2-mode))
 (add-to-list 'auto-mode-alist '("\\.scss" . scss-mode))
-(add-to-list 'auto-mode-alist '("\\.less" . css-mode))
+(add-to-list 'auto-mode-alist '("\\.less" . less-css-mode))
 (add-to-list 'auto-mode-alist '("bashrc" . sh-mode))
 (add-to-list 'auto-mode-alist
              '("\\.\\(?:gemspec\\|irbrc\\|gemrc\\|rake\\|rb\\|ru\\|thor\\)\\'" . ruby-mode))
