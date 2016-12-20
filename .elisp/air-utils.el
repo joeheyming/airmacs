@@ -550,6 +550,7 @@ The characters copied are inserted in the buffer before point."
       (when (string= matchchar "/") (setq closechar "/"))
       (when (string= matchchar "\"") (setq closechar "\""))
       (when (string= matchchar "\'") (setq closechar "\'"))
+      (when (string= matchchar "`") (setq closechar "`"))
       (if (not closechar) (error "Not on a blinkable char, try one of '(){}[]<>/\'\"'"))
       (condition-case nil
           (util-matching-char-position matchchar closechar backward)
@@ -959,12 +960,11 @@ If the current file doesn't exist yet the buffer is saved to create it."
   (set-file-modes (buffer-file-name) (string-to-number mode 8))
   (message (format "File permission set to %s" mode)))
 
-(defun util-custom-compile (cmd custom-compile-name &optional protect)
+(defun util-custom-compile (cmd custom-compile-name)
   "Run a custom compile command in a custom buffer"
   (util-save-and-save-some-buffers)
-  (let ((mybuf (current-buffer)))
-    (if (get-buffer custom-compile-name)
-        (kill-buffer custom-compile-name))
+  (let* ((mybuf (buffer-name (current-buffer))))
+    (message (format "Running cmd: %s" cmd))
     (compile cmd)
     (switch-to-buffer "*compilation*")
     (rename-buffer custom-compile-name)
@@ -1020,6 +1020,26 @@ If the current file doesn't exist yet the buffer is saved to create it."
   (let ((sort-fold-case t))
     (call-interactively 'sort-lines)))
 
+
+
+(defun util-toggle-quotes()
+  "Toggle the quotes under the current quoted region"
+  (interactive)
+  (save-excursion
+  (er/mark-outside-quotes)
+  (let ((startpoint (region-beginning))
+        (endpoint (region-end))
+        (changechar (if (looking-at "'") "\"" "'"))
+        )
+    (if (not (= startpoint endpoint))
+        (progn
+          (deactivate-mark)
+          (delete-char 1)
+          (insert changechar)
+          (forward-char (- (- endpoint startpoint) 1))
+          (delete-backward-char 1)
+          (insert changechar))))))
+
 (defun zap-backward-whitespace ()
   "Deletes any whitespace to the left of the cursor"
   (interactive)
@@ -1045,6 +1065,7 @@ If the current file doesn't exist yet the buffer is saved to create it."
                 (end-char (current-char)))
             (er/mark-outside-pairs)
             (deactivate-mark)
+            
             (forward-char)
             (setq end-point (- end-point (zap-forward-whitespace)))
             (while (<= (point) end-point)
@@ -1090,3 +1111,4 @@ If the current file doesn't exist yet the buffer is saved to create it."
           (search-forward-regexp "\\]\\|)")
           (backward-char)
           (insert-then-indent "\n")))))
+

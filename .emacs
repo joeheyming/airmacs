@@ -5,6 +5,10 @@
 (add-to-list 'load-path "~/.elisp")
 ;; package-initialize may fail under some versions of emacs.
 ;; Commenting it out appears to fix that in those cases.
+
+(require 'package)
+(add-to-list 'package-archives
+         '("melpa-stable" . "https://stable.melpa.org/packages/") t)
 (package-initialize)
 (setenv "PATH" (concat "/usr/local/bin:" (getenv "PATH")))
 
@@ -100,7 +104,6 @@
       (lambda ()
         (invert-face 'mode-line)
         (run-with-timer 0.1 nil 'invert-face 'mode-line)))
-
 (blink-cursor-mode -1)
 (setq blink-matching-delay 0.1)
 
@@ -118,12 +121,9 @@
 (setq kill-whole-line t)
 
 (require 'yasnippet)
-(add-hook 'prog-mode-hook
-          '(lambda ()
-             (yas-minor-mode)))
 
-(yas/global-mode 1)
 (yas/initialize)
+(yas/global-mode 1)
 
 ;; Tab completion
 (setq hippie-expand-try-functions-list (list
@@ -172,6 +172,7 @@
 (add-to-list 'auto-mode-alist '("\\.org" . org-mode))
 (add-to-list 'auto-mode-alist '("\\.md" . markdown-mode))
 (add-to-list 'auto-mode-alist '("\\.json" . json-mode))
+(add-to-list 'auto-mode-alist '("\\.groovy" . groovy-mode))
 (add-to-list 'auto-mode-alist '("\\.properties" . conf-javaprop-mode))
 
 ; don't iconify on C-z when running in X
@@ -281,7 +282,7 @@
  '(diff-function ((t (:inherit diff-context-face :foreground "DarkGoldenrod1"))))
  '(diff-header ((((class color) (background dark)) (:foreground "forest green"))))
  '(diff-index ((t (:inherit diff-file-header-face :underline t))))
- '(diff-refine-change ((t (:background "gray30"))))
+ '(diff-refine-changed ((t (:background "gray30"))))
  '(diff-removed ((t (:foreground "violet"))))
  '(font-lock-comment-face ((t (:foreground "chocolate1"))))
  '(trailing-whitespace ((((class color) (background dark)) (:background "grey30")))))
@@ -465,7 +466,7 @@
 (setq-default js2-show-parse-errors nil)
 (setq-default js2-strict-missing-semi-warning nil)
 (setq-default js2-strict-trailing-comma-warning t)
-(setq-default js2-global-externs '("setTimeout" "clearTimeout" "setInterval" "clearInterval" "console" "JSON" "define" "describe" "beforeEach" "afterEach" "it" "xit" "spyOn" "expect" "jasmine" "runs" "waits" "waitsFor" "xdescribe" "require" "localStorage" "sessionStorage" "Image" "exports" "module"))
+(setq-default js2-global-externs '("setTimeout" "clearTimeout" "setInterval" "clearInterval" "console" "JSON" "define" "describe" "beforeEach" "afterEach" "it" "xit" "spyOn" "expect" "jasmine" "runs" "waits" "waitsFor" "xdescribe" "require" "localStorage" "sessionStorage" "Image" "exports" "module" "process" "__dirname"))
 
 (add-hook 'js2-mode-hook
           '(lambda ()
@@ -555,4 +556,18 @@
 (add-hook 'conf-javaprop-mode-hook 
           '(lambda () (conf-quote-normal nil)))
 
+(add-hook 'json-mode-hook
+          (lambda ()
+            (make-local-variable 'js-indent-level)
+            (setq js-indent-level 2)))
+
 (message "Done loading airmacs")
+(setq tab-always-indent 'complete)
+(put 'narrow-to-region 'disabled nil)
+(put 'dired-find-alternate-file 'disabled nil)
+
+(global-set-key (kbd "C-s") 'isearch-forward-regexp)
+(global-set-key (kbd "C-r") 'isearch-backward-regexp)
+(global-set-key (kbd "C-M-s") 'isearch-forward)
+(global-set-key (kbd "C-M-r") 'isearch-backward)
+(show-paren-mode 1)
