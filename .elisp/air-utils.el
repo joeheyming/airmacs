@@ -965,6 +965,8 @@ If the current file doesn't exist yet the buffer is saved to create it."
   (util-save-and-save-some-buffers)
   (let* ((mybuf (buffer-name (current-buffer))))
     (message (format "Running cmd: %s" cmd))
+    (if (get-buffer custom-compile-name)
+        (kill-buffer custom-compile-name))
     (compile cmd)
     (switch-to-buffer "*compilation*")
     (rename-buffer custom-compile-name)
