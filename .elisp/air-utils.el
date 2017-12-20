@@ -204,14 +204,36 @@
 
 (defun run-current-file () 
   (interactive)
-  (let ((bang (shebang)))
-    (if (not(string= bang ""))
+  (let* (
+        (bang (shebang))
+        (filename (buffer-file-name))
+        (extension (file-name-extension filename))
+        )
+    (message (format "bang = %s %s" bang extension))
+    (if (not(string= bang nil))
         (progn
           (util-save-and-save-some-buffers)
           (util-shell-function 
            (format "%s %s" bang buffer-file-name)
            )
           )
+      (if (string-match "webpack.config" filename)
+          (progn
+            (message (format "webpack = %s" filename))
+            (util-shell-function 
+             (format "%s --config %s" "webpack" filename)
+             )
+            )
+       
+        (if (string= extension "js")
+            (progn
+              (message (format "string-match = %s" filename))
+              (util-shell-function 
+               (format "%s %s" "/usr/local/bin/node" filename)
+               )
+              )
+          )
+        )
       )
     )
 )

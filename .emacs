@@ -153,15 +153,18 @@
 (autoload 'perl-mode "perl-mode")
 (autoload 'java-mode "java-mode")
 (autoload 'js2-mode "js2-mode")
+(autoload 'typescript-mode "typescript-mode")
 (autoload 'lisp-mode "lisp-mode")
 (autoload 'ruby-mode "ruby-mode")
 (autoload 'scss-mode "scss-mode")
 (autoload 'web-mode "web-mode")
+(autoload 'csharp-mode "csharp-mode")
 
 (add-to-list 'auto-mode-alist '("\\.log\\'" . auto-revert-mode))
 (add-to-list 'auto-mode-alist '("Makefile" . makefile-mode))
-(add-to-list 'auto-mode-alist '("\\.\\(html\\|mustache\\)" . web-mode))
-(add-to-list 'auto-mode-alist '("\\.js" . js2-mode))
+(add-to-list 'auto-mode-alist '("\\..*\\(html\\|mustache\\)" . web-mode))
+(add-to-list 'auto-mode-alist '("\\.jsx" . web-mode))
+(add-to-list 'auto-mode-alist '("\\.js$" . js2-mode))
 (add-to-list 'auto-mode-alist '("\\.scss" . scss-mode))
 (add-to-list 'auto-mode-alist '("\\.less" . less-css-mode))
 (add-to-list 'auto-mode-alist '("bashrc" . sh-mode))
@@ -174,6 +177,9 @@
 (add-to-list 'auto-mode-alist '("\\.json" . json-mode))
 (add-to-list 'auto-mode-alist '("\\.groovy" . groovy-mode))
 (add-to-list 'auto-mode-alist '("\\.properties" . conf-javaprop-mode))
+(add-to-list 'auto-mode-alist '("\\.cs" . csharp-mode))
+(add-to-list 'auto-mode-alist '("\\.ts" . typescript-mode))
+(add-to-list 'auto-mode-alist '("*hggrep*" . compilation-mode))
 
 ; don't iconify on C-z when running in X
 (when window-system (global-set-key "\C-z" 'util-zap-to-char))
@@ -230,6 +236,8 @@
 (setq compilation-search-path
       (list "~" nil))
 
+(setq grep-highlight-matches t)
+(setq grep-match-face "white")
 (setq compilation-error-regexp-alist
       (append '(
                 ("# Failed test [0-9]+ in \\(.*\\) at line \\([0-9]+\\)\\( fail #[0-9]+\\)?$" 1 2)
@@ -349,6 +357,7 @@
 
 (global-set-key (kbd "C-=") 'er/expand-region)
 (global-set-key (kbd "C-c C-l") 'helm-ls-git-ls)
+(global-set-key (kbd "C-c C-n") 'helm-projectile)
 (global-set-key (kbd "C-x 4") 'split-window-4)
 (global-set-key "\C-a" 'util-beginning-or-toindent)
 (global-set-key "\C-e" 'util-ending-or-nextline-end)
@@ -466,7 +475,10 @@
 (setq-default js2-show-parse-errors nil)
 (setq-default js2-strict-missing-semi-warning nil)
 (setq-default js2-strict-trailing-comma-warning t)
-(setq-default js2-global-externs '("setTimeout" "clearTimeout" "setInterval" "clearInterval" "console" "JSON" "define" "describe" "beforeEach" "afterEach" "it" "xit" "spyOn" "expect" "jasmine" "runs" "waits" "waitsFor" "xdescribe" "require" "localStorage" "sessionStorage" "Image" "exports" "module" "process" "__dirname"))
+(setq-default js2-global-externs '("setTimeout" "clearTimeout" "setInterval" "clearInterval" "console" "JSON" "define"
+                                   "describe" "beforeEach" "afterEach" "it" "xit" "spyOn" "expect" "jasmine" "runs"
+                                   "waits" "waitsFor" "xdescribe" "require" "localStorage" "sessionStorage" "Image"
+                                   "exports" "module" "process" "__dirname" "_" "$" "$$"))
 
 (add-hook 'js2-mode-hook
           '(lambda ()
@@ -498,6 +510,11 @@
              (local-set-key [(super a) ?s ?l] 'js2r-forward-slurp)
              (local-set-key [(super a) ?b ?a] 'js2r-forward-barf)
              (local-set-key [(super a) ?k] 'js2r-kill)
+
+             ;; (setq yas-buffer-local-condition
+             ;;       (if (js2-in-string/comment)
+             ;;           (require-snippet-condition . force-in-comment)
+             ;;         t))
              ))
 
 (add-hook 'java-mode-hook
@@ -547,15 +564,18 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
+ '(package-selected-packages
+   (quote
+    (rjsx-mode magit-gerrit typescript-mode helm-projectile helm company-tern projectile helm-git-grep sudoku ido-ubiquitous csharp-mode groovy-mode js-import helm-make sx sos dockerfile-mode yaml-mode xml-rpc xkcd web-mode undo-tree tiny tidy tabbar scala-mode2 requirejs rbt python-mode osx-lib nyan-mode nvm nlinum mvn memento markdown-mode mark-multiple makey magit load-dir less-css-mode kv jsx-mode json-mode js3-mode js2-refactor js-doc js-comint jira jabber imenu+ igrep hide-lines helm-ls-git helm-gtags helm-git-files helm-git helm-dash helm-aws grunt git-rebase-mode git-commit-mode gist expand-region emojify editorconfig-core editorconfig debbugs counsel company-emoji buttercup breaktime bang auto-save-buffers-enhanced arduino-mode anything-git-files angular-snippets adaptive-wrap ac-emoji 2048-game)))
  '(web-mode-attr-indent-offset 2)
  '(web-mode-code-indent-offset 2)
  '(web-mode-css-indent-offset 2)
  '(web-mode-markup-indent-offset 2)
  '(web-mode-sql-indent-offset 2))
 
-; prevent java properties files or yaml files from syntax highlighting quote
 (add-hook 'conf-javaprop-mode-hook 
           '(lambda () (conf-quote-normal nil)))
+
 (add-hook 'yaml-mode-hook 
           '(lambda () (conf-quote-normal nil)))
 
@@ -574,6 +594,7 @@
 (global-set-key (kbd "C-M-s") 'isearch-forward)
 (global-set-key (kbd "C-M-r") 'isearch-backward)
 (show-paren-mode 1)
+(put 'downcase-region 'disabled nil)
 
 (add-hook 'python-mode-hook
           (lambda ()
@@ -592,3 +613,40 @@
 
 (when window-system
   (global-set-key (kbd "C-x C-c") 'ask-before-closing))
+
+
+;; (ido-mode 1)
+;; (ido-everywhere 1)
+
+(require 'ido-completing-read+)
+(setq js-import-quote "'")
+
+(defun modify-import (fn)
+  
+  (ido-ubiquitous-mode 1)
+  (funcall fn)
+  (ido-ubiquitous-mode 0)
+  (forward-line -1)
+  (let ((thisline (current-line)))
+    (message "import before: %s" thisline)
+    (setq thisline (replace-regexp-in-string "\\(\\.\\.\\/\\)*" "" thisline))
+    (setq thisline (replace-regexp-in-string "src\\/js\\/" "" thisline))
+    (message "import after: %s" thisline)
+    (kill-line)
+    (insert thisline)
+    )
+  )
+
+(defun my-js-import ()
+  (interactive)
+  (modify-import 'js-import))
+
+(global-set-key [(super a) ?j ?i] 'my-js-import)
+
+(defun my-js-import-dev ()
+  (interactive)
+  (modify-import 'js-import-dev))
+(global-set-key [(super a) ?j ?d] 'my-js-import-dev)
+
+(setq projectile-indexing-method 'native)
+(setq projectile-enable-caching t)

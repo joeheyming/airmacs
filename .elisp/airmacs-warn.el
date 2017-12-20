@@ -7,7 +7,7 @@
   (format "print '%s = %%s' %% (%s)" varname variable))
 
 (defun airmacs-consolelog-variable (varname variable)
-  (format "window.console.log('%s = ', %s);" varname variable))
+  (format "console.log('%s = ', %s);" varname variable))
 
 (defun airmacs-javalog-variable (varname variable)
   (format "log.warn(\"%s = \" + %s);" varname variable))
@@ -62,7 +62,8 @@
   "Put a pretty printed statment for all languages"
   (interactive)
   (save-excursion
-    (let ((mymode (format "%s" major-mode)))
+    (let ((mymode (format "%s" major-mode))
+          (airmacs-formatter))
       (cond 
        ((string-match "emacs-lisp" mymode)
         (setq airmacs-formatter 'airmacs-lisp-format-variable))
