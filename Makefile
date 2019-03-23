@@ -16,7 +16,7 @@ $(HOME)/.emacs.d/snippets/%: .emacs.d/snippets/% $(HOME)/.emacs.d/snippets/
 
 # check package-install before you add to the external target
 pkg-install:
-	./emacs-pkg-install.sh js2-mode js2-refactor auto-complete tern tern-auto-complete load-dir nlinum python-mode hide-lines web-mode auto-save-buffers-enhanced helm helm-ls-git helm-git-grep js2-refactor multiple-cursors requirejs-mode json-mode markdown-mode less-css-mode expand-region magit typescript-mode csharp-mode js-import
+	./emacs-pkg-install.sh js2-mode js2-refactor auto-complete tern tern-auto-complete load-dir nlinum python-mode hide-lines web-mode auto-save-buffers-enhanced helm helm-ls-git helm-git-grep js2-refactor multiple-cursors requirejs-mode json-mode markdown-mode less-css-mode expand-region magit typescript-mode csharp-mode js-import neotree all-the-icons org org-bullets dockerfile-mode
 
 external:
 # non-github links
