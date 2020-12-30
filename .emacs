@@ -10,6 +10,7 @@
 (package-initialize)
 
 (setenv "PATH" (concat "/usr/local/bin:/Library/TeX/texbin:" (getenv "PATH") ":/usr/local/bin:/usr/bin:/bin"))
+(add-to-list 'load-path "~/.elisp")
 (setq exec-path (split-string (getenv "PATH") path-separator))
 
 (require 'cl)
@@ -67,7 +68,7 @@
         "cperl-mode"))
 
 ;; Show trailing whitespace in normal buffers
-(setq-default show-trailing-whitespace nil)
+(setq-default show-trailing-whitespace t)
 
 (setq-default auto-save-directory "~/.autosaves/")
 
@@ -191,8 +192,7 @@
 (add-to-list 'auto-mode-alist '("\\.hbs" . web-mode))
 (add-to-list 'auto-mode-alist '("\\.bzl" . bazel-mode))
 
-;; don't iconify on C-z when running in X
-(when window-system (global-set-key "\C-z" 'util-zap-to-char))
+(global-set-key "\C-z" 'util-zap-to-char)
 
 ;; Mix kbd and old-style key bindings
 (define-prefix-command 'my-keymap)
@@ -367,6 +367,8 @@
  	     (split-window-horizontally)
  	     )))
 
+(setenv "PAGER" "cat")
+
 (global-set-key [f4] 'helm-git-grep-at-point)
 (global-set-key [(shift f4)] 'helm-imenu)
 
@@ -419,11 +421,14 @@
 (global-set-key [(super a) ?p ?x] 'util-pretty-xml)
 (global-set-key [(super a) ?r ?f] 'util-revert-file)
 (global-set-key [(super a) ?r ?h] 'util-revert-hunk)
+(global-set-key [(super a) ?r ?n] 'util-insert-random-number)
+(global-set-key [(super a) ?r ?s] 'util-insert-random-string)
 (global-set-key [(super a) ?s ?a ] 'vc-annotate)
+(global-set-key [(super a) ?s ?s ] 'util-server-force-start)
 (global-set-key [(super a) ?s ?w ] '(lambda() (interactive) (split-window-horizontally) (other-window 1)))
 (global-set-key [(super a) ?t ?q ] 'util-toggle-quotes)
 (global-set-key [(super a) ?u ?b] 'util-update-buffers)
-(global-set-key [(super a) ?u ?t] 'untabify)
+(global-set-key [(super a) ?u ?t] 'util-insert-unix-timestamp)
 (global-set-key [(super a) ?w ?a] 'airmacs-agnostic-warn)
 (global-set-key [(super e)] 'eval-region-verbose)
 (global-set-key [(super shift e)] '(lambda()  (interactive)
@@ -653,9 +658,11 @@
 
 (add-hook 'python-mode-hook
           (lambda ()
-            ((setq )etq indent-tabs-mode t)
+            (setq indent-tabs-mode t)
             (setq tab-width 4)
-            (setq python-indent 4)))
+            (setq python-indent 4)
+            (setq py-closing-list-dedents-bos t)
+            ))
 
 (defun ask-before-closing ()
   "Ask whether or not to close, and then close if y was pressed"
@@ -671,6 +678,18 @@
 
 (setq projectile-indexing-method 'native)
 (setq projectile-enable-caching t)
+
+(require 'whitespace)
+(setq whitespace-style '(face trailing empty lines-tail))
+(setq whitespace-line-column 100)
+(global-whitespace-mode 1)
+
+(custom-set-faces
+ '(ediff-fine-diff-B ((t (:background "#226622"))))
+ '(ediff-odd-diff-A  ((t (:foreground "black"))))
+ '(ediff-even-diff-A ((t (:background "brightblack"))))
+ '(ediff-even-diff-B ((t (:background "brightblack"))))
+)
 
 (add-to-list 'default-frame-alist
              '(font . "-adobe-courier-medium-r-normal--12-120-75-75-m-70-iso8859-1"))

@@ -14,21 +14,13 @@
 (package-initialize)
 (package-refresh-contents)
 
-(message "Installing packages:")
-(loop for package in pkgs-to-install
-      do
-      (condition-case err
-          (progn
-            (message (format "\t%s" package))
-            (package-install package)
-            )
-        (error
-         err
-         (message "Error installing package: %s\n%s" package err)
-         )
-        )
-      )
-     
 
 (require 'emojify)
-(emojify-download-emoji emojify-emoji-set)
+(unless (file-exists-p (concat emojify-emojis-dir "/" emojify-emoji-set))
+  (emojify-download-emoji emojify-emoji-set))
+
+(message "Installing packages:")
+(dolist (pkg argv)
+  (if (package-installed-p pkg)
+      (message (format "\t%s is already installed" pkg))
+    (package-install (intern pkg) t)))

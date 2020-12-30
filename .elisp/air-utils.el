@@ -126,6 +126,29 @@
         standard-output
       (util-shell-function cmd "stdout" 't))))
 
+(defun util-random-string ()
+  (interactive)
+  (replace-regexp-in-string "\n" ""
+                            (shell-command-to-string "random-string -l --no-punctuation")))
+
+(defun util-insert-random-string ()
+  (interactive)
+  (insert (util-random-string)))
+
+(defun util-replace-random-string ()
+  (interactive)
+  (save-excursion
+    (let ((newstr (util-random-string)))
+      (replace-string (car kill-ring-yank-pointer) newstr))))
+
+(defun util-insert-random-number ()
+  (interactive)
+  (insert (number-to-string (random 10000))))
+
+(defun util-insert-unix-timestamp ()
+  (interactive)
+  (insert (number-to-string (truncate (time-to-seconds (current-time))))))
+
 (defun eval-fun()
   "Looks for the above defun, then evaluates the function"
   (interactive)
@@ -134,14 +157,12 @@
     (let ((line (current-line)))
       (string-match "defun \\([^(]+\\)" line)
       (message (format "evaling function: '%s'" (match-string 1 line))))
-    
     (set-mark (point))
     (util-goto-matching-char)
     (forward-char)
     (eval-region (region-beginning) (region-end))
     (deactivate-mark)
     ))
-  
 
 (defun util-select-empty-output-buffer (buffername)
   (switch-to-buffer (get-buffer-create buffername))
@@ -1120,7 +1141,6 @@ If the current file doesn't exist yet the buffer is saved to create it."
                 (end-char (current-char)))
             (er/mark-outside-pairs)
             (deactivate-mark)
-            
             (forward-char)
             (setq end-point (- end-point (zap-forward-whitespace)))
             (while (<= (point) end-point)
@@ -1183,3 +1203,9 @@ If the current file doesn't exist yet the buffer is saved to create it."
     (delete-forward-char 1)
     ))
 
+(defun util-server-force-start ()
+  "server-force-delete; server-start"
+  (interactive)
+  (progn
+    (server-force-delete)
+    (server-start)))
