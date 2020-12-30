@@ -202,6 +202,21 @@
   (if (buffer-file-name) (save-buffer))
   (save-some-buffers))
 
+(defun locate-package-json (&optional directory)
+  "Search the current DIRECTORY and upwards for a package.json."
+  (let ((packagejson-current-dir directory)
+        (packagejsonfile-dir (locate-dominating-file
+                        (if directory
+                            directory
+                          default-directory) "package.json")))
+    (when packagejsonfile-dir
+      (setq packagejsonfile-dir (file-truename packagejsonfile-dir)
+            packagejson-current-dir packagejsonfile-dir
+            packagejson-current-project (car (last (split-string packagejsonfile-dir "/" t)))
+            packagejson-current-path (format "%spackage.json" packagejsonfile-dir))
+      )))
+
+
 (defun run-current-file () 
   (interactive)
   (let* (
@@ -210,33 +225,44 @@
         (extension (file-name-extension filename))
         )
     (message (format "bang = %s %s" bang extension))
-    (if (not(string= bang nil))
-        (progn
-          (util-save-and-save-some-buffers)
-          (util-shell-function 
-           (format "%s %s" bang buffer-file-name)
-           )
-          )
-      (if (string-match "webpack.config" filename)
-          (progn
+    (cond
+     (
+      (not(string= bang nil))
+      (progn
+        (util-save-and-save-some-buffers)
+        (util-shell-function 
+         (format "%s %s" bang buffer-file-name)
+         )
+        )
+      )
+     (
+      (string-match "webpack.config" filename)
+      (progn
             (message (format "webpack = %s" filename))
             (util-shell-function 
              (format "%s --config %s" "webpack" filename)
              )
             )
-       
-        (if (string= extension "js")
-            (progn
+      )
+     (
+      (string-match ".test.[jt]sx?" filename)
+      (progn
+        (let ((default-directory (file-name-directory (locate-package-json (file-name-directory filename)))))
+          (util-shell-function (format "yarn jest %s" filename)))
+        )
+      )
+     (
+      (string= extension "js")
+      (progn
               (message (format "string-match = %s" filename))
               (util-shell-function 
                (format "%s %s" "/usr/local/bin/node" filename)
                )
               )
-          )
-        )
       )
+     )
     )
-)
+  )
 
 (defun util-zap-to-char (arg char)
   "Kill up to *but not including* ARG'th occurrence of CHAR.
@@ -834,8 +860,12 @@ The characters copied are inserted in the buffer before point."
                (not (eq previous-key 'up))
                (not (and (eolp) (string-match "[\]\)\}\,]" (previous-char))))
                (not (empty-line-prefix)))
-          (hippie-expand 'nil)
+          (progn
+            (message "hippie expand")
+            (hippie-expand 'nil)
+            )
         (progn
+          (message "funcall indent command")
           (setq he-num -1)
          (funcall indent-command))))))
 
@@ -982,8 +1012,9 @@ If the current file doesn't exist yet the buffer is saved to create it."
   (set-file-modes (buffer-file-name) (string-to-number mode 8))
   (message (format "File permission set to %s" mode)))
 
-(defun util-custom-compile (cmd custom-compile-name)
+(defun util-custom-compile (cmd &optional custom-compile-name)
   "Run a custom compile command in a custom buffer"
+  (or custom-compile-name (setq custom-compile-name "*custom-compile*"))
   (util-save-and-save-some-buffers)
   (let* ((mybuf (buffer-name (current-buffer))))
     (message (format "Running cmd: %s" cmd))
@@ -1135,4 +1166,20 @@ If the current file doesn't exist yet the buffer is saved to create it."
           (search-forward-regexp "\\]\\|)")
           (backward-char)
           (insert-then-indent "\n")))))
+
+
+(require 's)
+(defun air-toggle-first-char ()
+  "Capitalize only the first character of the input STRING."
+  (interactive)
+  (save-excursion
+    (message (current-word))
+    (backward-word)
+    (message (current-char))
+    (insert (if (s-lowercase?(current-char))
+                (upcase (current-char))
+              (downcase (current-char))
+              ))
+    (delete-forward-char 1)
+    ))
 

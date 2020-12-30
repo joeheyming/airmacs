@@ -32,14 +32,21 @@
 (defun airmacs-lisp-format-variable (varname variable)
   (format "(message (format \"%s = %%s\" %s))" varname variable))
 
+(defun airmacs-go-format-variable (varname variable)
+  (format "log.Println(fmt.Sprintf(\"%s = %%s\", %s))" varname variable))
+
+
 (defun airmacs-astrace-variable (varname variable)
   (format "trace(\"%s = \" + %s);" varname variable))
+
+(defun airmacs-groovyprint-variable (varname variable)
+  (format "println(\"%s = \" + %s);" varname variable))
 
 
 (defun airmacs-insert-agnostic-warn (formatter)
   "Put in a pretty printed warn statement"
   (let (variable string go_up)
-    (setq variable (if mark-active (active-region) (current-variable)))
+    (setq variable (replace-regexp-in-string  ":$" "" (if mark-active (active-region) (current-variable))))
     (setq string (current-word))
     (setq go_up nil)
     ;; If the current line has a return statement, insert the warn above this line.
@@ -67,6 +74,8 @@
       (cond 
        ((string-match "emacs-lisp" mymode)
         (setq airmacs-formatter 'airmacs-lisp-format-variable))
+       ((string-match "go-mode" mymode)
+        (setq airmacs-formatter 'airmacs-go-format-variable))
        ((string-match "python" mymode)
         (setq airmacs-formatter 'airmacs-pythonprint-variable))
        ((string-match "php" mymode)
@@ -83,6 +92,8 @@
         (setq airmacs-formatter 'airmacs-shecho-variable))
        ((string-match "actionscript" mymode)
         (setq airmacs-formatter 'airmacs-astrace-variable))
+       ((string-match "groovy" mymode)
+        (setq airmacs-formatter 'airmacs-groovyprint-variable))
        )
       (airmacs-insert-agnostic-warn airmacs-formatter))))
 

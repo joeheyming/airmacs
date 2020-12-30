@@ -14,11 +14,20 @@ $(HOME)/.emacs.d/snippets/:
 $(HOME)/.emacs.d/snippets/%: .emacs.d/snippets/% $(HOME)/.emacs.d/snippets/
 	-/bin/cp -rf $< $@ 
 
+PACKAGES := all-the-icons auto-complete auto-complete autopair csharp-mode dash dockerfile-mode sublime-themes emojify expand-region f flycheck helm helm-git-grep helm-ls-git hide-lines ht js2-mode js2-refactor json-mode less-css-mode load-dir magit markdown-mode multiple-cursors neotree nlinum org org-bullets python-mode request saveplace tern tern-auto-complete typescript-mode web-mode yasnippet yasnippet-snippets groovy-mode tide
+
 # check package-install before you add to the external target
 pkg-install:
-	./emacs-pkg-install.sh js2-mode js2-refactor auto-complete tern tern-auto-complete load-dir nlinum python-mode hide-lines web-mode auto-save-buffers-enhanced helm helm-ls-git helm-git-grep js2-refactor multiple-cursors requirejs-mode json-mode markdown-mode less-css-mode expand-region magit typescript-mode csharp-mode js-import neotree all-the-icons org org-bullets dockerfile-mode
+	./emacs-pkg-install.sh $(PACKAGES)
 
-external:
-# non-github links
+~/.elisp/load-directory.el:
 	cd ~/.elisp; wget -Nq http://www.cb1.com/~john/computing/emacs/lisp/basics/load-directory.el 
+
+~/.elisp/highlight-beyond-fill-column.el:
 	cd ~/.elisp; wget -Nq http://www.emacswiki.org/emacs/download/highlight-beyond-fill-column.el
+
+~/.elisp/compile-eslint.el:
+	cd ~/.elisp; wget -Nq https://raw.githubusercontent.com/Fuco1/compile-eslint/master/compile-eslint.el
+
+# non-github links
+external: ~/.elisp/load-directory.el ~/.elisp/highlight-beyond-fill-column.el ~/.elisp/compile-eslint.el
