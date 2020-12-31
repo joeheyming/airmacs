@@ -198,7 +198,7 @@
       (setq end (- (point) 1))
       (buffer-substring beg end)
       )))
-      
+
 (defun shebang ()
   "return the shebang of the current buffer"
   (interactive)
@@ -238,7 +238,7 @@
       )))
 
 
-(defun run-current-file () 
+(defun run-current-file ()
   (interactive)
   (let* (
         (bang (shebang))
@@ -251,7 +251,7 @@
       (not(string= bang nil))
       (progn
         (util-save-and-save-some-buffers)
-        (util-shell-function 
+        (util-shell-function
          (format "%s %s" bang buffer-file-name)
          )
         )
@@ -268,22 +268,17 @@
      (
       (string-match ".test.[jt]sx?" filename)
       (progn
-        (let ((default-directory (file-name-directory (locate-package-json (file-name-directory filename)))))
+        (let ((default-directory
+                (file-name-directory (locate-package-json (file-name-directory filename)))))
           (util-shell-function (format "yarn jest %s" filename)))
         )
       )
-     (
-      (string= extension "js")
+     ((string= extension "js")
       (progn
-              (message (format "string-match = %s" filename))
-              (util-shell-function 
-               (format "%s %s" "/usr/local/bin/node" filename)
-               )
-              )
-      )
-     )
-    )
-  )
+        (message (format "string-match = %s" filename))
+        (util-shell-function 
+         (format "%s %s" "/usr/local/bin/node" filename)
+         ))))))
 
 (defun util-zap-to-char (arg char)
   "Kill up to *but not including* ARG'th occurrence of CHAR.
@@ -327,7 +322,7 @@ Goes backward if ARG is negative; error if CHAR not found."
   (interactive)
   (let (endofword (endofline (line-end-position)))
     (save-excursion (forward-word 1) (setq endofword (point)))
-    (kill-region (point) 
+    (kill-region (point)
                  (if (= endofline (point))
                      (1+ endofline)
                    (if (< endofline endofword) endofline endofword)))))
@@ -567,14 +562,14 @@ The characters copied are inserted in the buffer before point."
     (if horizontal (forward-char linecount) (forward-line linecount))
     (setq beg (point))
     (insert region)
-    (if mark-was-active 
+    (if mark-was-active
         (progn
           (goto-char beg)
           (setq deactivate-mark 'nil)
           (set-mark (point))
           (goto-char (+ (point) (length region)))
           )
-      (progn 
+      (progn
         (if horizontal (forward-char linecount) (forward-line linecount))
         (move-to-column col)
         ))))
@@ -720,7 +715,7 @@ The characters copied are inserted in the buffer before point."
     (message "%s" (or errmesg "Done refreshing all open non-modified files..."))))
 
 (defun util-update-buffer (buffer)
-  (set-buffer buffer) 
+  (set-buffer buffer)
   (message "Refreshing %s" (buffer-file-name buffer))
   (if (not (verify-visited-file-modtime buffer))
       (if (buffer-modified-p buffer) (error "Buffer has file and buffer changes")

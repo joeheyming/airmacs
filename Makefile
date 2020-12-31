@@ -14,7 +14,7 @@ $(HOME)/.emacs.d/snippets/:
 	-mkdir -p $(HOME)/.emacs.d/snippets/
 
 $(HOME)/.emacs.d/snippets/%: .emacs.d/snippets/% $(HOME)/.emacs.d/snippets/
-	-/bin/cp -rf $< $@ 
+	-/bin/cp -rf $< $@
 
 PACKAGES := all-the-icons \
 	auto-complete \
@@ -62,7 +62,7 @@ pkg-install:
 	./emacs-pkg-install.sh $(PACKAGES)
 
 ~/.elisp/load-directory.el:
-	cd ~/.elisp; wget -Nq http://www.cb1.com/~john/computing/emacs/lisp/basics/load-directory.el 
+	cd ~/.elisp; wget -Nq http://www.cb1.com/~john/computing/emacs/lisp/basics/load-directory.el
 
 ~/.elisp/highlight-beyond-fill-column.el:
 	cd ~/.elisp; wget -Nq http://www.emacswiki.org/emacs/download/highlight-beyond-fill-column.el

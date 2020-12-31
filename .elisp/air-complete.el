@@ -17,7 +17,7 @@
 (defun air-lookup-filename-completion ()
   (let ((completion
          (cadr
-          (find-if (lambda (el) (looking-at (car el))) 
+          (find-if (lambda (el) (looking-at (car el)))
                    air-dir-completions))))
     (eval completion)))
 
@@ -26,8 +26,8 @@
   (interactive)
   (backward-char 3)
   (let ((directory (air-lookup-filename-completion)))
-    (cond 
-     (directory 
+    (cond
+     (directory
       (beginning-of-line)
       (delete-region (line-beginning-position) (line-end-position))
       (insert directory))

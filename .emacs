@@ -607,7 +607,7 @@
  '(neo-window-width 30)
  '(package-selected-packages
    (quote
-    (browse-at-remote helm-open-github emojify all-the-icons-dired autopair kubernetes-tramp kubernetes-evil docker-tramp ht f yarn-mode mustache-mode company web-mode kubernetes kubernetes-helm selectric-mode groovy-mode flycheck-gometalinter go-autocomplete exec-path-from-shell helm-ag tide go-mode jest magithub expand-region python-mode coffee-mode zone-nyan import-js rainbow-delimiters dockerfile-mode yasnippet-snippets org-babel-eval-in-repl org-bullets indium hcl-mode org org-mobile-sync mmm-mako protobuf-mode hide-lines rbt json-mode yaml-mode bazel-mode hideshow-org sublime-themes curl-for-url flycheck helm helm-git-grep ido-ubiquitous helm-make undo-tree tidy scala-mode2 nlinum memento markdown-mode load-dir jira imenu+ igrep editorconfig-core editorconfig counsel buttercup breaktime bang anything-git-files adaptive-wrap ac-emoji 2048-game)))
+    (lispy browse-at-remote helm-open-github emojify all-the-icons-dired autopair kubernetes-tramp kubernetes-evil docker-tramp ht f yarn-mode mustache-mode company web-mode kubernetes kubernetes-helm selectric-mode groovy-mode flycheck-gometalinter go-autocomplete exec-path-from-shell helm-ag tide go-mode jest magithub expand-region python-mode coffee-mode zone-nyan import-js rainbow-delimiters dockerfile-mode yasnippet-snippets org-babel-eval-in-repl org-bullets indium hcl-mode org org-mobile-sync mmm-mako protobuf-mode hide-lines rbt json-mode yaml-mode bazel-mode hideshow-org sublime-themes curl-for-url flycheck helm helm-git-grep ido-ubiquitous helm-make undo-tree tidy scala-mode2 nlinum memento markdown-mode load-dir jira imenu+ igrep editorconfig-core editorconfig counsel buttercup breaktime bang anything-git-files adaptive-wrap ac-emoji 2048-game)))
  '(web-mode-attr-indent-offset 2)
  '(web-mode-code-indent-offset 2)
  '(web-mode-css-indent-offset 2)
@@ -684,12 +684,7 @@
 (setq whitespace-line-column 100)
 (global-whitespace-mode 1)
 
-(custom-set-faces
- '(ediff-fine-diff-B ((t (:background "#226622"))))
- '(ediff-odd-diff-A  ((t (:foreground "black"))))
- '(ediff-even-diff-A ((t (:background "brightblack"))))
- '(ediff-even-diff-B ((t (:background "brightblack"))))
-)
+
 
 (add-to-list 'default-frame-alist
              '(font . "-adobe-courier-medium-r-normal--12-120-75-75-m-70-iso8859-1"))

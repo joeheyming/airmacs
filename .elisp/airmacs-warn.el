@@ -16,7 +16,7 @@
   (format "print(\"%s = \" . %s);" varname variable))
 
 (defun airmacs-perl-warn-data-dumper (varname variable)
-  (cond 
+  (cond
    ((or (string-match "@" variable) (string-match "%" variable))
     (format "warn Data::Dumper->Dump([\\%s], [qw(%s)]);" variable varname))
    (t (format "warn Data::Dumper->Dump([%s], [qw(%s)]);" variable varname))
@@ -71,7 +71,7 @@
   (save-excursion
     (let ((mymode (format "%s" major-mode))
           (airmacs-formatter))
-      (cond 
+      (cond
        ((string-match "emacs-lisp" mymode)
         (setq airmacs-formatter 'airmacs-lisp-format-variable))
        ((string-match "go-mode" mymode)
@@ -96,4 +96,3 @@
         (setq airmacs-formatter 'airmacs-groovyprint-variable))
        )
       (airmacs-insert-agnostic-warn airmacs-formatter))))
-
