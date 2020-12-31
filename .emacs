@@ -776,10 +776,20 @@
 
 (when (executable-find "shellcheck")
   (progn
-    (defun shellcheck ()
+    (defun air-shellcheck ()
       (interactive)
       (util-save-and-save-some-buffers)
       (compile (format "shellcheck %s" (buffer-file-name)))
       )
 
-    (global-set-key [(super a) ?s ?c] 'shellcheck)))
+    (global-set-key [(super a) ?s ?c] 'air-shellcheck)))
+
+(when (executable-find "shfmt")
+  (progn
+    (defun air-shfmt ()
+      (interactive)
+      (util-save-and-save-some-buffers)
+      (compile (format "shfmt -i 2 -ci -w -s %s" (buffer-file-name)))
+      )
+
+    (global-set-key [(super a) ?s ?f] 'air-shfmt)))
