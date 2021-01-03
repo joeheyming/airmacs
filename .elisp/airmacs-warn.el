@@ -4,7 +4,7 @@
 (provide 'airmacs-warn)
 
 (defun airmacs-pythonprint-variable (varname variable)
-  (format "print '%s = %%s' %% (%s)" varname variable))
+  (format "print('%s = %%s' %% (%s))" varname variable))
 
 (defun airmacs-consolelog-variable (varname variable)
   (format "console.log('%s = ', %s);" varname variable))
@@ -45,22 +45,23 @@
 
 (defun airmacs-insert-agnostic-warn (formatter)
   "Put in a pretty printed warn statement"
-  (let (variable string go_up)
-    (setq variable (replace-regexp-in-string  ":$" "" (if mark-active (active-region) (current-variable))))
-    (setq string (current-word))
-    (setq go_up nil)
-    ;; If the current line has a return statement, insert the warn above this line.
-    (save-excursion
-      (beginning-of-line)
-      (setq beg (point))
-      (end-of-line)
-      (setq current_line (buffer-substring beg (point)))
-      (if (string-match "return" current_line)
-          (setq go_up t)))
-    (if go_up (backward-line))
+  (let* (
+        (warn-variable (if (use-region-p)
+                           (active-region)
+                         (thing-at-point 'sexp 'no-properties)))
+        (message-string (if (use-region-p) "selection" warn-variable)))
+    (if (nth 3 (syntax-ppss)) ;; if inside a string
+        (setq warn-variable
+              (format "\"%s\"" warn-variable)))
+
+    (if (string= (substring warn-variable 0 1) "\"")
+        (setq warn-variable (format "\"%s\""
+                             (replace-regexp-in-string
+                             "\"" "\\\\\"" (substring warn-variable 1
+                                                      (- (length warn-variable) 1))))))
     (end-of-line)
     (newline)
-    (insert (funcall formatter string variable))
+    (insert (funcall formatter message-string warn-variable))
     (indent-according-to-mode)
     )
   )
