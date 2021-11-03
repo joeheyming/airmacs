@@ -14,13 +14,14 @@
 (package-initialize)
 (package-refresh-contents)
 
-
-(require 'emojify)
-(unless (file-exists-p (concat emojify-emojis-dir "/" emojify-emoji-set))
-  (emojify-download-emoji emojify-emoji-set))
-
 (message "Installing packages:")
 (dolist (pkg argv)
   (if (package-installed-p pkg)
       (message (format "\t%s is already installed" pkg))
-    (package-install (intern pkg) t)))
+    (condition-case nil
+        (package-install (intern pkg) t)
+      (error nil))))
+
+(require 'emojify)
+(unless (file-exists-p (concat emojify-emojis-dir "/" emojify-emoji-set))
+  (emojify-download-emoji emojify-emoji-set))

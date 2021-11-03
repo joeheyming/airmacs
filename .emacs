@@ -1,3 +1,4 @@
+
 (message "You are running airmacs")
 
 (add-to-list 'load-path "~/.elisp")
@@ -110,7 +111,6 @@
 
 (require 'js2-mode)
 (setq js2-mirror-mode t)
-(autopair-global-mode 0)
 
 (require 'web-mode)
 (setq web-mode-comment-style 2)
@@ -336,6 +336,7 @@
         (allfiles (directory-files dir nil "\\.el$")))
     (mapc load-it allfiles)))
 (load-directory "~/.elisp")
+(autopair-global-mode 0)
 
 ;;
 ;; anything config to locate
@@ -399,6 +400,7 @@
 (global-set-key [(super \,)] '(lambda () (interactive) (util-ensure-trailing-thing ",")))
 (global-set-key [(super \;)] '(lambda () (interactive) (util-ensure-trailing-thing ";")))
 (global-set-key [(super a) ?l ?s] 'helm-ls-git-ls)
+(global-set-key [(ctrl p)] 'helm-ls-git-ls)
 (global-set-key [(super a) ?a ?f] 'util-apply-file)
 (global-set-key [(super a) ?a ?h] 'util-apply-hunk)
 (global-set-key [(super a) ?a ?i] 'util-apply-file)
@@ -606,8 +608,7 @@
  '(magit-dispatch-arguments nil)
  '(neo-window-width 30)
  '(package-selected-packages
-   (quote
-    (lispy browse-at-remote helm-open-github emojify all-the-icons-dired autopair kubernetes-tramp kubernetes-evil docker-tramp ht f yarn-mode mustache-mode company web-mode kubernetes kubernetes-helm selectric-mode groovy-mode flycheck-gometalinter go-autocomplete exec-path-from-shell helm-ag tide go-mode jest magithub expand-region python-mode coffee-mode zone-nyan import-js rainbow-delimiters dockerfile-mode yasnippet-snippets org-babel-eval-in-repl org-bullets indium hcl-mode org org-mobile-sync mmm-mako protobuf-mode hide-lines rbt json-mode yaml-mode bazel-mode hideshow-org sublime-themes curl-for-url flycheck helm helm-git-grep ido-ubiquitous helm-make undo-tree tidy scala-mode2 nlinum memento markdown-mode load-dir jira imenu+ igrep editorconfig-core editorconfig counsel buttercup breaktime bang anything-git-files adaptive-wrap ac-emoji 2048-game)))
+   '(eslintd-fix lispy browse-at-remote helm-open-github emojify all-the-icons-dired autopair kubernetes-tramp kubernetes-evil docker-tramp ht f yarn-mode mustache-mode company web-mode kubernetes kubernetes-helm selectric-mode groovy-mode flycheck-gometalinter go-autocomplete exec-path-from-shell helm-ag tide go-mode jest magithub expand-region python-mode coffee-mode zone-nyan import-js rainbow-delimiters dockerfile-mode yasnippet-snippets org-babel-eval-in-repl org-bullets indium hcl-mode org org-mobile-sync mmm-mako protobuf-mode hide-lines rbt json-mode yaml-mode bazel-mode hideshow-org sublime-themes curl-for-url flycheck helm helm-git-grep ido-ubiquitous helm-make undo-tree tidy scala-mode2 nlinum memento markdown-mode load-dir jira imenu+ igrep editorconfig-core editorconfig counsel buttercup breaktime bang anything-git-files adaptive-wrap ac-emoji 2048-game))
  '(web-mode-attr-indent-offset 2)
  '(web-mode-code-indent-offset 2)
  '(web-mode-css-indent-offset 2)
@@ -743,27 +744,26 @@
 (setq company-tooltip-align-annotations t)
 
 ;; formats the buffer before saving
-(add-hook 'before-save-hook 'tide-format-before-save)
+;; (add-hook 'before-save-hook 'tide-format-before-save)
 
 (add-hook 'typescript-mode-hook #'setup-tide-mode)
+(add-hook 'web-mode-hook (lambda ()
+                           (progn
+                             (when (string-match "\\(tsx\\|ts\\|js\\|jsx\\)$" (file-name-extension buffer-file-name))
+                               (setup-tide-mode)
+                               (eslintd-fix-mode)
+                             ))))
 
 
-(add-hook 'web-mode-hook
-          (lambda ()
-            (when (string-equal "tsx" (file-name-extension buffer-file-name))
-              (setup-tide-mode))))
+(add-hook 'web-mode-hook 'setup-tide-mode)
 ;; enable typescript-tslint checker
+(require 'flycheck)
 (flycheck-add-mode 'typescript-tslint 'web-mode)
 
 (require 'tide)
 (add-hook 'js2-mode-hook #'setup-tide-mode)
 ;; configure javascript-tide checker to run after your default javascript checker
 (flycheck-add-next-checker 'javascript-eslint 'javascript-tide 'append)
-
-(add-hook 'web-mode-hook
-          (lambda ()
-            (when (string-equal "jsx" (file-name-extension buffer-file-name))
-              (setup-tide-mode))))
 
 (require 'saveplace)
 (setq-default save-place t)

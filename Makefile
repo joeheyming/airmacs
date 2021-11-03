@@ -1,8 +1,7 @@
+all: external pkg-install install
 
 install: $(patsubst .elisp/%,$(HOME)/.elisp/%,$(wildcard .elisp/*)) $(patsubst .emacs.d/snippets/%,$(HOME)/.emacs.d/snippets/%,$(wildcard .emacs.d/snippets/*))
 	/bin/cp -i .emacs $(HOME)/.emacs
-
-all: external pkg-install install
 
 $(HOME)/.elisp:
 	-mkdir $(HOME)/.elisp
@@ -18,12 +17,11 @@ $(HOME)/.emacs.d/snippets/%: .emacs.d/snippets/% $(HOME)/.emacs.d/snippets/
 
 PACKAGES := all-the-icons \
 	auto-complete \
-	auto-complete \
-	autopair \
 	csharp-mode \
 	dash \
 	dockerfile-mode \
 	emojify \
+	eslintd-fix \
 	expand-region \
 	f \
 	flycheck \
@@ -62,13 +60,18 @@ pkg-install:
 	./emacs-pkg-install.sh $(PACKAGES)
 
 ~/.elisp/load-directory.el:
-	cd ~/.elisp; wget -Nq http://www.cb1.com/~john/computing/emacs/lisp/basics/load-directory.el
+	cd ~/.elisp; wget -Nq https://raw.githubusercontent.com/atog/emacs/master/load-directory.el
 
 ~/.elisp/highlight-beyond-fill-column.el:
-	cd ~/.elisp; wget -Nq http://www.emacswiki.org/emacs/download/highlight-beyond-fill-column.el
+	cd ~/.elisp; wget -Nq https://raw.githubusercontent.com/jml/emacs-configuration/main/plugins/highlight-beyond-fill-column.el
+
+~/.elisp/autopair.el:
+	cd ~/.elisp; wget -Nq https://raw.githubusercontent.com/joaotavora/autopair/master/autopair.el
+
 
 ~/.elisp/compile-eslint.el:
 	cd ~/.elisp; wget -Nq https://raw.githubusercontent.com/Fuco1/compile-eslint/master/compile-eslint.el
 
 # non-github links
-external: ~/.elisp/load-directory.el ~/.elisp/highlight-beyond-fill-column.el ~/.elisp/compile-eslint.el
+external: ~/.elisp/load-directory.el ~/.elisp/highlight-beyond-fill-column.el ~/.elisp/compile-eslint.el ~/.elisp/autopair.el
+
